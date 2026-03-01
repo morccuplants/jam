@@ -28,7 +28,7 @@ async function migrate() {
       )
     `);
 
-    -- Daily assignments: which 4 profiles does each user see today
+   
     await client.query(`
       CREATE TABLE IF NOT EXISTS daily_picks (
         id          SERIAL PRIMARY KEY,
@@ -39,7 +39,7 @@ async function migrate() {
       )
     `);
 
-    -- When user_id chooses profile_id
+    
     await client.query(`
       CREATE TABLE IF NOT EXISTS choices (
         id          SERIAL PRIMARY KEY,
@@ -51,7 +51,7 @@ async function migrate() {
       )
     `);
 
-    -- A match exists when both users chose each other on the same day
+    
     await client.query(`
       CREATE TABLE IF NOT EXISTS matches (
         id          SERIAL PRIMARY KEY,
@@ -63,7 +63,7 @@ async function migrate() {
       )
     `);
 
-    -- Web push subscriptions for push notifications
+    
     await client.query(`
       CREATE TABLE IF NOT EXISTS push_subscriptions (
         id          SERIAL PRIMARY KEY,
