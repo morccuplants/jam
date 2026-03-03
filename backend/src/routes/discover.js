@@ -111,7 +111,7 @@ router.post('/choose', requireAuth, async (req, res) => {
       const chooserName = chooserResult.rows[0]?.name;
       await sendPushToUser(profileId, {
         title: 'Someone chose you ✨',
-        body: `${chooserName} chose you today. Open twilight to respond.`,
+        body: `${chooserName} chose you today. Open the app to respond.`,
       });
     }
 
@@ -174,30 +174,29 @@ router.post('/respond', requireAuth, async (req, res) => {
       return res.json({ success: true, matched: false });
     }
 
-    // Find what date they chose us
     const choiceResult = await pool.query(
-      'SELECT pick_date FROM choices WHERE chooser_id = $1 AND chosen_id = $2 ORDER BY created_at DESC LIMIT 1',
-      [chooserId, userId]
-    );
-    if (!choiceResult.rows.length) {
-      return res.status(400).json({ error: 'No choice found from that user' });
-    }
+  'SELECT id FROM choices WHERE chooser_id = $1 AND chosen_id = $2 LIMIT 1',
+  [chooserId, userId]
+);
+if (!choiceResult.rows.length) {
+  return res.status(400).json({ error: 'No choice found from that user' });
+}
 
-    const pickDate = choiceResult.rows[0].pick_date;
-    const today = new Date().toISOString().slice(0, 10);
+const today = new Date().toISOString().slice(0, 10);
 
-    // Insert our reciprocal choice
-    await pool.query(
-      'INSERT INTO choices (chooser_id, chosen_id, pick_date) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
-      [userId, chooserId, today]
-    );
+// Insert our reciprocal choice
+await pool.query(
+  'INSERT INTO choices (chooser_id, chosen_id, pick_date) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
+  [userId, chooserId, today]
+);
 
-    // Create match
-    const [a, b] = [userId, chooserId].sort((x, y) => x - y);
-    await pool.query(
-      'INSERT INTO matches (user_a_id, user_b_id, matched_on) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
-      [a, b, pickDate]
-    );
+// Create match
+const [a, b] = [userId, chooserId].sort((x, y) => x - y);
+await pool.query(
+  'INSERT INTO matches (user_a_id, user_b_id, matched_on) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
+  [a, b, today]
+);
+  
 
     // Notify both
     const myResult = await pool.query('SELECT name FROM users WHERE id = $1', [userId]);
