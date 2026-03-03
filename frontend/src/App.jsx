@@ -132,7 +132,7 @@ const STYLE = `
 
   /* ── Header ── */
   .header { border-bottom:2px solid var(--border-dk); }
-  .header-band { background:var(--ink); padding:13px 18px 10px; display:flex; align-items:center; justify-content:space-between; }
+  .header-band { background:var(--ink-light); padding:13px 18px 10px; display:flex; align-items:center; justify-content:space-between; }
   .logo { font-family:'EB Garamond',serif; font-size:1.6rem; font-weight:400; font-style:italic; color:var(--cream); }
   .logo-sub { font-family:'Pixelify Sans',monospace; font-size:.6rem; color:var(--pink); display:block; margin-top:1px; letter-spacing:.06em; }
   .my-avatar-btn { width:34px; height:34px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); cursor:pointer; background:var(--page); display:flex; align-items:center; justify-content:center; font-size:.95rem; transition:border-color .12s; flex-shrink:0; }
