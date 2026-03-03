@@ -237,8 +237,8 @@ const STYLE = `
   .chat-header-avatar { width:32px; height:32px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.9rem; background:var(--page); }
   .chat-header-avatar img { width:100%; height:100%; object-fit:cover; }
   .chat-header-info { flex:1; min-width:0; }
-  .chat-header-name { font-family:'EB Garamond',serif; font-size:1.05rem; font-style:italic; color:var(--cream); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .chat-header-sub { font-family:'Pixelify Sans',monospace; font-size:.48rem; color:var(--pink); }
+  .chat-header-name { font-family:'EB Garamond',serif; font-size:1.2rem; font-style:italic; color:var(--cream); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chat-header-sub { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--pink); }
 
   .msg-counter { padding:6px 14px; background:var(--page); border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; }
   .msg-bar-wrap { flex:1; height:5px; background:var(--border); overflow:hidden; }
@@ -246,7 +246,7 @@ const STYLE = `
   .msg-bar-fill.plenty { background:var(--sage); }
   .msg-bar-fill.low    { background:var(--peach); }
   .msg-bar-fill.danger { background:var(--pink-dk); }
-  .msg-count-label { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); white-space:nowrap; flex-shrink:0; }
+  .msg-count-label { font-family:'Pixelify Sans',monospace; font-size:.62rem; color:var(--ink-faint); white-space:nowrap; flex-shrink:0; }
 
   .date-confirmed-bar { padding:7px 14px; background:#f0faf0; border-bottom:2px solid var(--sage); display:flex; align-items:center; gap:7px; flex-shrink:0; }
   .date-confirmed-bar span { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:#4a7a4a; }
@@ -258,11 +258,11 @@ const STYLE = `
   .bubble-row { display:flex; align-items:flex-end; gap:6px; }
   .bubble-row.mine { justify-content:flex-end; }
   .bubble-row.theirs { justify-content:flex-start; }
-  .bubble { max-width:72%; padding:8px 11px; border-radius:var(--r); font-family:'EB Garamond',serif; font-size:.97rem; line-height:1.5; }
+  .bubble { max-width:78%; padding:10px 14px; border-radius:var(--r); font-family:'EB Garamond',serif; font-size:1.1rem; line-height:1.55; }
   .bubble.mine { background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-bottom-right-radius:0; }
   .bubble.theirs { background:var(--white); color:var(--ink); border:2px solid var(--border); border-bottom-left-radius:0; }
-  .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.42rem; color:var(--ink-faint); margin-top:3px; display:block; text-align:right; }
-  .bubble-avatar { width:22px; height:22px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.6rem; background:var(--page); }
+  .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); margin-top:4px; display:block; text-align:right; }
+  .bubble-avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; background:var(--page); }
   .bubble-avatar img { width:100%; height:100%; object-fit:cover; }
 
   .date-prompt-card { background:var(--white); border:2px solid var(--pink-dk); border-left:4px solid var(--pink-dk); border-radius:var(--r); padding:13px 14px; margin:4px 0; }
@@ -281,10 +281,10 @@ const STYLE = `
   .unmatch-notice p { font-family:'EB Garamond',serif; font-size:.95rem; color:#8a3030; line-height:1.6; font-style:italic; }
 
   .chat-input-bar { padding:10px 12px; border-top:2px solid var(--border-dk); background:var(--page); display:flex; gap:8px; align-items:flex-end; flex-shrink:0; }
-  .chat-input { flex:1; background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:9px 12px; font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink); outline:none; resize:none; max-height:90px; line-height:1.45; transition:border-color .12s; }
+  .chat-input { flex:1; background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:11px 14px; font-family:'EB Garamond',serif; font-size:1.1rem; color:var(--ink); outline:none; resize:none; max-height:110px; line-height:1.5; transition:border-color .12s; }
   .chat-input:focus { border-color:var(--pink-dk); }
   .chat-input:disabled { background:var(--border); color:var(--ink-faint); cursor:not-allowed; }
-  .chat-send-btn { padding:9px 14px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.62rem; cursor:pointer; transition:background .12s; flex-shrink:0; align-self:flex-end; }
+  .chat-send-btn { padding:11px 16px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.68rem; cursor:pointer; transition:background .12s; flex-shrink:0; align-self:flex-end; }
   .chat-send-btn:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
   .chat-send-btn:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
 
@@ -481,7 +481,6 @@ function EditProfilePanel({ user, onSave, onClose }) {
         <div><label className="ob-label">Age range</label><div className="range-row"><input className="ob-input" type="number" value={ageMin} onChange={e=>setAgeMin(e.target.value)} min={18} max={99} /><span className="range-sep">to</span><input className="ob-input" type="number" value={ageMax} onChange={e=>setAgeMax(e.target.value)} min={18} max={99} /></div></div>
         <div><label className="ob-label">Bio</label><textarea className="ob-textarea" rows={5} value={bio} onChange={e=>setBio(e.target.value)} maxLength={280} /><div className="char-count">{bio.length}/280</div></div>
         <div><label className="ob-label">City</label><CityPicker value={city} onChange={setCity} /></div>
-        <div><label className="ob-label">Contact platform</label><ContactTypePicker value={contactType} onChange={setContactType} /><label className="ob-label" style={{marginTop:4}}>Handle or address</label><input className="ob-input" value={contactValue} onChange={e=>setContactValue(e.target.value)} /></div>
         <button className="panel-save-btn" onClick={save} disabled={saving}>{saving?'saving...':'save changes'}</button>
       </div>
     </div>
@@ -777,7 +776,6 @@ function MainApp({ user: initialUser, setUser }) {
                     <div className="match-info"><h3>{m.partner.name}</h3><p>{m.partner.age} · {m.partner.city}</p><p style={{marginTop:4,fontSize:'.88rem',color:'var(--ink-light)',fontFamily:"'EB Garamond',serif",fontStyle:'italic',lineHeight:1.6}}>{m.partner.bio}</p></div>
                   </div>
                   <div className="match-label">contact info</div>
-                  <div className="contact-box"><div className="contact-row"><div className="contact-icon">{m.partner.contact.icon}</div><div><span className="contact-label">{m.partner.contact.type}</span><span className="contact-value">{m.partner.contact.value}</span></div></div></div>
                   <button className={`open-chat-btn ${m.unreadCount>0?'has-unread':''}`} onClick={()=>setOpenChat(m)}>
                     {m.unreadCount>0?`💬 ${m.unreadCount} new message${m.unreadCount===1?'':'s'}`:'💬 open chat'}
                   </button>
