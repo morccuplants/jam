@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import {
   apiRegister, apiLogin, apiGetMe, apiUpdateMe, apiUploadPhoto,
   apiGetDiscover, apiChoose, apiGetNotifications, apiRespond, apiGetMatches,
+  apiGetMessages, apiSendMessage, apiDateResponse,
 } from "./api.js";
 import { requestPushPermission } from "./push.js";
 
@@ -227,6 +228,69 @@ const STYLE = `
 
   .login-toggle { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.55rem; color:var(--ink-faint); margin-top:14px; }
   .login-toggle button { background:none; border:none; color:var(--pink-dk); cursor:pointer; font-size:.55rem; text-decoration:underline; padding:0; font-family:'Pixelify Sans',monospace; }
+
+  /* ── Chat Panel ── */
+  .chat-panel { position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; background:var(--cream); max-width:480px; margin:0 auto; animation:slideUp .25s ease forwards; border-left:2px solid var(--border-dk); border-right:2px solid var(--border-dk); }
+  .chat-header { display:flex; align-items:center; gap:10px; padding:11px 14px; background:var(--ink); border-bottom:2px solid var(--border-dk); flex-shrink:0; }
+  .chat-back { background:transparent; border:2px solid var(--border-dk); color:var(--cream); width:28px; height:28px; border-radius:var(--r); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:.8rem; transition:border-color .12s; flex-shrink:0; }
+  .chat-back:hover { border-color:var(--pink); color:var(--pink); }
+  .chat-header-avatar { width:32px; height:32px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.9rem; background:var(--page); }
+  .chat-header-avatar img { width:100%; height:100%; object-fit:cover; }
+  .chat-header-info { flex:1; min-width:0; }
+  .chat-header-name { font-family:'EB Garamond',serif; font-size:1.05rem; font-style:italic; color:var(--cream); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chat-header-sub { font-family:'Pixelify Sans',monospace; font-size:.48rem; color:var(--pink); }
+
+  .msg-counter { padding:6px 14px; background:var(--page); border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .msg-bar-wrap { flex:1; height:5px; background:var(--border); overflow:hidden; }
+  .msg-bar-fill { height:100%; transition:width .3s ease, background .3s ease; }
+  .msg-bar-fill.plenty { background:var(--sage); }
+  .msg-bar-fill.low    { background:var(--peach); }
+  .msg-bar-fill.danger { background:var(--pink-dk); }
+  .msg-count-label { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); white-space:nowrap; flex-shrink:0; }
+
+  .date-confirmed-bar { padding:7px 14px; background:#f0faf0; border-bottom:2px solid var(--sage); display:flex; align-items:center; gap:7px; flex-shrink:0; }
+  .date-confirmed-bar span { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:#4a7a4a; }
+  .date-confirmed-bar strong { font-family:'EB Garamond',serif; font-size:.88rem; color:#2a5a2a; font-weight:500; }
+
+  .chat-messages { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:8px; }
+  .chat-day-label { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.48rem; color:var(--ink-faint); margin:4px 0; }
+
+  .bubble-row { display:flex; align-items:flex-end; gap:6px; }
+  .bubble-row.mine { justify-content:flex-end; }
+  .bubble-row.theirs { justify-content:flex-start; }
+  .bubble { max-width:72%; padding:8px 11px; border-radius:var(--r); font-family:'EB Garamond',serif; font-size:.97rem; line-height:1.5; }
+  .bubble.mine { background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-bottom-right-radius:0; }
+  .bubble.theirs { background:var(--white); color:var(--ink); border:2px solid var(--border); border-bottom-left-radius:0; }
+  .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.42rem; color:var(--ink-faint); margin-top:3px; display:block; text-align:right; }
+  .bubble-avatar { width:22px; height:22px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.6rem; background:var(--page); }
+  .bubble-avatar img { width:100%; height:100%; object-fit:cover; }
+
+  .date-prompt-card { background:var(--white); border:2px solid var(--pink-dk); border-left:4px solid var(--pink-dk); border-radius:var(--r); padding:13px 14px; margin:4px 0; }
+  .date-prompt-title { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--pink-dk); margin-bottom:5px; }
+  .date-prompt-text { font-family:'EB Garamond',serif; font-size:.95rem; color:var(--ink); line-height:1.55; margin-bottom:11px; font-style:italic; }
+  .date-prompt-actions { display:flex; gap:7px; }
+  .btn-yes { flex:1; padding:9px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
+  .btn-yes:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
+  .btn-yes:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
+  .btn-no { flex:1; padding:9px; background:var(--page); color:var(--ink-light); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
+  .btn-no:hover { background:var(--border); }
+  .date-prompt-waiting { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:var(--ink-faint); margin-top:6px; }
+
+  .unmatch-notice { background:#fdf0f0; border:2px solid #e0b0b0; border-radius:var(--r); padding:16px; text-align:center; margin:6px 0; }
+  .unmatch-notice .icon { font-size:1.6rem; margin-bottom:6px; }
+  .unmatch-notice p { font-family:'EB Garamond',serif; font-size:.95rem; color:#8a3030; line-height:1.6; font-style:italic; }
+
+  .chat-input-bar { padding:10px 12px; border-top:2px solid var(--border-dk); background:var(--page); display:flex; gap:8px; align-items:flex-end; flex-shrink:0; }
+  .chat-input { flex:1; background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:9px 12px; font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink); outline:none; resize:none; max-height:90px; line-height:1.45; transition:border-color .12s; }
+  .chat-input:focus { border-color:var(--pink-dk); }
+  .chat-input:disabled { background:var(--border); color:var(--ink-faint); cursor:not-allowed; }
+  .chat-send-btn { padding:9px 14px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.62rem; cursor:pointer; transition:background .12s; flex-shrink:0; align-self:flex-end; }
+  .chat-send-btn:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
+  .chat-send-btn:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
+
+  .open-chat-btn { width:100%; margin-top:10px; padding:9px; background:var(--page); color:var(--ink); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
+  .open-chat-btn:hover { background:var(--border); }
+  .open-chat-btn.has-unread { border-color:var(--pink-dk); color:var(--pink-dk); background:#fdf6fa; }
 `;
 
 const CITIES = [
@@ -424,10 +488,208 @@ function EditProfilePanel({ user, onSave, onClose }) {
   );
 }
 
+const MAX_MSGS = 20;
+const WARN_AT  = 10;
+
+function formatMsgTime(ts) {
+  const d = new Date(ts);
+  return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+function ChatPanel({ match, user, onClose, onUnmatch }) {
+  const [messages, setMessages]           = useState([]);
+  const [draft, setDraft]                 = useState('');
+  const [sending, setSending]             = useState(false);
+  const [loading, setLoading]             = useState(true);
+  const [myRemaining, setMyRemaining]     = useState(MAX_MSGS);
+  const [dateStatus, setDateStatus]       = useState(match.dateStatus || null);
+  const [dateDetails, setDateDetails]     = useState(match.dateDetails || null);
+  const [dateResponding, setDateResponding] = useState(false);
+  const bottomRef = useRef();
+  const inputRef  = useRef();
+
+  const loadMessages = useCallback(async () => {
+    try {
+      const data = await apiGetMessages(match.id);
+      setMessages(data.messages || []);
+      setMyRemaining(data.myRemaining ?? MAX_MSGS);
+      setDateStatus(data.dateStatus || null);
+      setDateDetails(data.dateDetails || null);
+    } catch {}
+    finally { setLoading(false); }
+  }, [match.id]);
+
+  useEffect(() => { loadMessages(); }, [loadMessages]);
+  useEffect(() => { const t = setInterval(loadMessages, 5000); return () => clearInterval(t); }, [loadMessages]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:'smooth' }); }, [messages]);
+
+  async function sendMessage() {
+    const text = draft.trim();
+    if (!text || sending || myRemaining <= 0) return;
+    setSending(true);
+    const optimistic = { id: Date.now(), senderId: user.id, text, ts: Date.now() };
+    setMessages(prev => [...prev, optimistic]);
+    setMyRemaining(prev => prev - 1);
+    setDraft('');
+    try {
+      const data = await apiSendMessage(match.id, text);
+      setMessages(data.messages || []);
+      setMyRemaining(data.myRemaining ?? myRemaining - 1);
+      setDateStatus(data.dateStatus || dateStatus);
+    } catch (err) {
+      setMessages(prev => prev.filter(m => m.id !== optimistic.id));
+      setMyRemaining(prev => prev + 1);
+      setDraft(text);
+      alert(err.message);
+    }
+    finally { setSending(false); inputRef.current?.focus(); }
+  }
+
+  async function respondDate(yes) {
+    setDateResponding(true);
+    try {
+      const data = await apiDateResponse(match.id, yes);
+      setDateStatus(data.dateStatus);
+      setDateDetails(data.dateDetails || null);
+      if (data.unmatched) onUnmatch(match.id);
+    } catch (err) { alert(err.message); }
+    finally { setDateResponding(false); }
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  const barPct   = Math.max(0, (myRemaining / MAX_MSGS) * 100);
+  const barClass = myRemaining > 12 ? 'plenty' : myRemaining > 5 ? 'low' : 'danger';
+  const isOut    = myRemaining <= 0;
+  const isUnmatched = dateStatus === 'declined';
+  const canSend  = !isOut && !isUnmatched;
+  const shouldShowPrompt = myRemaining <= WARN_AT && !['confirmed','declined'].includes(dateStatus);
+
+  return (
+    <div className="chat-panel">
+      <div className="chat-header">
+        <button className="chat-back" onClick={onClose}>←</button>
+        <div className="chat-header-avatar">
+          {match.partner.photoUrl ? <img src={photoUrl(match.partner.photoUrl)} alt={match.partner.name} /> : '🌟'}
+        </div>
+        <div className="chat-header-info">
+          <div className="chat-header-name">{match.partner.name}</div>
+          <div className="chat-header-sub">{match.partner.age} · {match.partner.city}</div>
+        </div>
+      </div>
+
+      {dateStatus === 'confirmed' ? (
+        <div className="date-confirmed-bar">
+          <span>📅 date set —</span>
+          <strong>{dateDetails || 'details in chat'}</strong>
+        </div>
+      ) : !isUnmatched && (
+        <div className="msg-counter">
+          <div className="msg-bar-wrap">
+            <div className={`msg-bar-fill ${barClass}`} style={{width:`${barPct}%`}} />
+          </div>
+          <div className="msg-count-label">
+            {isOut ? 'no messages left' : `${myRemaining} msg${myRemaining===1?'':'s'} left`}
+          </div>
+        </div>
+      )}
+
+      <div className="chat-messages">
+        {loading && <div className="chat-day-label">loading…</div>}
+        {!loading && messages.length === 0 && (
+          <div className="chat-day-label">say hello — you have {MAX_MSGS} messages each</div>
+        )}
+        {messages.map((msg, i) => {
+          const mine = msg.senderId === user.id;
+          return (
+            <div key={msg.id || i} className={`bubble-row ${mine ? 'mine' : 'theirs'}`}>
+              {!mine && (
+                <div className="bubble-avatar">
+                  {match.partner.photoUrl ? <img src={photoUrl(match.partner.photoUrl)} alt="" /> : '🌟'}
+                </div>
+              )}
+              <div className={`bubble ${mine ? 'mine' : 'theirs'}`}>
+                {msg.text}
+                <span className="bubble-time">{formatMsgTime(msg.ts)}</span>
+              </div>
+            </div>
+          );
+        })}
+
+        {shouldShowPrompt && (
+          <div className="date-prompt-card">
+            <div className="date-prompt-title">⏳ running low</div>
+            <div className="date-prompt-text">
+              Have a date? Agree on a time and place now — if you run out of messages without setting a date, you'll unmatch.
+            </div>
+            {dateStatus === 'i_said_yes' ? (
+              <div className="date-prompt-waiting">✓ you said yes — waiting for {match.partner.name}…</div>
+            ) : (
+              <div className="date-prompt-actions">
+                <button className="btn-yes" disabled={dateResponding} onClick={() => respondDate(true)}>yes, we have a date ♥</button>
+                <button className="btn-no"  disabled={dateResponding} onClick={() => respondDate(false)}>not yet</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {isOut && !['confirmed','declined'].includes(dateStatus) && (
+          <div className="date-prompt-card">
+            <div className="date-prompt-title">📭 messages used up</div>
+            <div className="date-prompt-text">Did you two agree on a date?</div>
+            {dateStatus === 'i_said_yes' ? (
+              <div className="date-prompt-waiting">✓ you said yes — waiting for {match.partner.name}…</div>
+            ) : (
+              <div className="date-prompt-actions">
+                <button className="btn-yes" disabled={dateResponding} onClick={() => respondDate(true)}>yes!</button>
+                <button className="btn-no"  disabled={dateResponding} onClick={() => respondDate(false)}>no</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {isUnmatched && (
+          <div className="unmatch-notice">
+            <div className="icon">🕯️</div>
+            <p>This match has ended. No date was set before messages ran out.</p>
+          </div>
+        )}
+
+        {dateStatus === 'confirmed' && (
+          <div className="date-prompt-card" style={{borderColor:'var(--sage)',borderLeftColor:'var(--sage)'}}>
+            <div className="date-prompt-title" style={{color:'#4a7a4a'}}>🎉 date confirmed!</div>
+            <div className="date-prompt-text">You're both in. Use your remaining messages to sort out the details.</div>
+          </div>
+        )}
+
+        <div ref={bottomRef} />
+      </div>
+
+      <div className="chat-input-bar">
+        <textarea
+          ref={inputRef}
+          className="chat-input"
+          rows={1}
+          placeholder={isUnmatched ? 'match ended' : isOut ? 'no messages left' : 'say something…'}
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onKeyDown={handleKey}
+          disabled={!canSend}
+        />
+        <button className="chat-send-btn" disabled={!draft.trim() || !canSend || sending} onClick={sendMessage}>
+          send
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function MainApp({ user: initialUser, setUser }) {
   const [user,setLocalUser]=useState(initialUser);const [tab,setTab]=useState('discover');const [countdown,setCountdown]=useState(getTimeUntilNext2PM());
   const [profiles,setProfiles]=useState([]);const [chosenId,setChosenId]=useState(null);const [selected,setSelected]=useState(null);
-  const [notifications,setNotifications]=useState([]);const [matches,setMatches]=useState([]);const [editOpen,setEditOpen]=useState(false);
+  const [notifications,setNotifications]=useState([]);const [matches,setMatches]=useState([]);const [editOpen,setEditOpen]=useState(false);const [openChat,setOpenChat]=useState(null);
   const [loadingDiscover,setLoadingDiscover]=useState(true);const [choosing,setChoosing]=useState(false);
 
   function updateUser(u){setLocalUser(u);setUser(u);}
@@ -450,14 +712,15 @@ function MainApp({ user: initialUser, setUser }) {
   }
   async function handlePass(id){await apiRespond(id,false);setNotifications(prev=>prev.map(n=>n.from.id===id?{...n,pending:false,passed:true}:n));}
 
-  const pendingCount=notifications.filter(n=>n.pending).length;
   const visibleNotifications=notifications.filter(n=>!n.matched);
+  const pendingCount=visibleNotifications.filter(n=>n.pending).length;
   const chosenProfile=profiles.find(p=>p.id===chosenId);
 
   return (
     <>
       <div className="app">
         {editOpen&&<EditProfilePanel user={user} onSave={u=>{updateUser(u);setEditOpen(false);}} onClose={()=>setEditOpen(false)} />}
+        {openChat&&<ChatPanel match={openChat} user={user} onClose={()=>setOpenChat(null)} onUnmatch={id=>{setMatches(prev=>prev.filter(m=>m.id!==id));setOpenChat(null);}} />}
         <div className="header">
           <div className="header-band">
             <div><div className="logo">be my jam</div><span className="logo-sub">♥ {user.city} ♥</span></div>
@@ -515,6 +778,9 @@ function MainApp({ user: initialUser, setUser }) {
                   </div>
                   <div className="match-label">contact info</div>
                   <div className="contact-box"><div className="contact-row"><div className="contact-icon">{m.partner.contact.icon}</div><div><span className="contact-label">{m.partner.contact.type}</span><span className="contact-value">{m.partner.contact.value}</span></div></div></div>
+                  <button className={`open-chat-btn ${m.unreadCount>0?'has-unread':''}`} onClick={()=>setOpenChat(m)}>
+                    {m.unreadCount>0?`💬 ${m.unreadCount} new message${m.unreadCount===1?'':'s'}`:'💬 open chat'}
+                  </button>
                 </div>
               ))}
             </div>
