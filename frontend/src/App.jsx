@@ -253,7 +253,7 @@ const STYLE = `
   .date-confirmed-bar strong { font-family:'EB Garamond',serif; font-size:.88rem; color:#2a5a2a; font-weight:500; }
 
   .chat-messages { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:8px; }
-  .chat-day-label { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.48rem; color:var(--ink-faint); margin:4px 0; }
+  .chat-day-label { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--ink-faint); margin:4px 0; }
 
   .bubble-row { display:flex; align-items:flex-end; gap:6px; }
   .bubble-row.mine { justify-content:flex-end; }
@@ -766,7 +766,6 @@ function MainApp({ user: initialUser, setUser }) {
           {tab==='matches'&&(
             <div className="fade-in">
               <div className="section-title">Matches</div>
-              <div className="section-sub">Their contact details are revealed below.</div>
               {matches.length===0&&<div className="empty-state"><div className="icon">🕯️</div><p>No matches yet.</p></div>}
               {matches.map(m=>(
                 <div key={m.id} className="match-card fade-in">
@@ -775,7 +774,7 @@ function MainApp({ user: initialUser, setUser }) {
                     <div className="match-avatar">{m.partner.photoUrl?<img src={photoUrl(m.partner.photoUrl)} alt={m.partner.name} />:'🌟'}</div>
                     <div className="match-info"><h3>{m.partner.name}</h3><p>{m.partner.age} · {m.partner.city}</p><p style={{marginTop:4,fontSize:'.88rem',color:'var(--ink-light)',fontFamily:"'EB Garamond',serif",fontStyle:'italic',lineHeight:1.6}}>{m.partner.bio}</p></div>
                   </div>
-                  <div className="match-label">contact info</div>
+                  <div className="match-label">set up a date :)</div>
                   <button className={`open-chat-btn ${m.unreadCount>0?'has-unread':''}`} onClick={()=>setOpenChat(m)}>
                     {m.unreadCount>0?`💬 ${m.unreadCount} new message${m.unreadCount===1?'':'s'}`:'💬 open chat'}
                   </button>
