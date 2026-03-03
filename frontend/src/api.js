@@ -1,7 +1,7 @@
 const BASE = import.meta.env.VITE_API_URL || '';
 
 async function request(path, options = {}) {
-  const token = localStorage.getItem('tw_token');
+  const token = localStorage.getItem('bmj_token');
   const res = await fetch(`${BASE}${path}`, {
     ...options,
     headers: {
@@ -38,7 +38,7 @@ export async function apiUpdateMe(data) {
 }
 
 export async function apiUploadPhoto(file) {
-  const token = localStorage.getItem('tw_token');
+  const token = localStorage.getItem('bmj_token');
   const form = new FormData();
   form.append('photo', file);
   const res = await fetch(`${BASE}/api/users/me/photo`, {
@@ -79,3 +79,17 @@ export async function apiGetVapidKey() {
 export async function apiSavePushSubscription(subscription) {
   return request('/api/push/subscribe', { method: 'POST', body: JSON.stringify({ subscription }) });
 }
+
+// ── Chat ──────────────────────────────────────────────────────
+export async function apiGetMessages(matchId) {
+  return request(`/api/chat/${matchId}`);
+}
+
+export async function apiSendMessage(matchId, text) {
+  return request(`/api/chat/${matchId}`, { method: 'POST', body: JSON.stringify({ text }) });
+}
+
+export async function apiDateResponse(matchId, yes) {
+  return request(`/api/chat/${matchId}/date-response`, { method: 'POST', body: JSON.stringify({ yes }) });
+}
+
