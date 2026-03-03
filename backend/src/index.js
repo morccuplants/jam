@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const discoverRoutes = require('./routes/discover');
 const pushRoutes = require('./routes/push');
+const chatRoutes = require('./routes/chat');
 const { startCron } = require('./cron/dailyPicks');
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/discover', discoverRoutes);
 app.use('/api/push', pushRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));

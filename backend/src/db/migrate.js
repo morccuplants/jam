@@ -75,6 +75,41 @@ async function migrate() {
       )
     `);
 
+    await client.query(`
+  CREATE TABLE IF NOT EXISTS chat_messages (
+    id          SERIAL PRIMARY KEY,
+    match_id    INTEGER NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    sender_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    text        TEXT NOT NULL,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+  )
+`);
+
+await client.query(`
+  CREATE TABLE IF NOT EXISTS chat_quotas (
+    id          SERIAL PRIMARY KEY,
+    match_id    INTEGER NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    used        INTEGER NOT NULL DEFAULT 0,
+    UNIQUE(match_id, user_id)
+  )
+`);
+
+await client.query(`
+  CREATE TABLE IF NOT EXISTS date_votes (
+    id          SERIAL PRIMARY KEY,
+    match_id    INTEGER NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    vote        BOOLEAN NOT NULL,
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(match_id, user_id)
+  )
+`);
+
+await client.query(`ALTER TABLE matches ADD COLUMN IF NOT EXISTS date_confirmed BOOLEAN NOT NULL DEFAULT false`);
+await client.query(`ALTER TABLE matches ADD COLUMN IF NOT EXISTS date_details TEXT`);
+await client.query(`ALTER TABLE matches ADD COLUMN IF NOT EXISTS unmatched BOOLEAN NOT NULL DEFAULT false`);
+
     await client.query('COMMIT');
     console.log('✅ Migration complete');
   } catch (err) {
