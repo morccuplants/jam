@@ -148,7 +148,7 @@ const STYLE = `
 
   /* ── Content ── */
   .content { flex:1; padding:22px 18px; }
-  .section-title { font-family:'EB Garamond',serif; font-size:1.5rem; font-weight:400; margin-bottom:2px; }
+  .section-title { font-family:'EB Garamond',serif; font-size:1.5rem; font-weight:400; margin-bottom:3px; }
   .section-sub { font-size:.88rem; color:var(--ink-faint); margin-bottom:16px; font-style:italic; }
   .countdown { display:inline-flex; align-items:center; gap:6px; background:var(--page); border:2px solid var(--border-dk); border-radius:var(--r); padding:5px 11px; font-family:'Pixelify Sans',monospace; font-size:.62rem; color:var(--ink); margin-bottom:16px; }
 
@@ -187,7 +187,7 @@ const STYLE = `
   .btn-match:hover { background:var(--pink-dk); color:var(--white); }
   .btn-pass { background:var(--page); color:var(--ink-light); border:2px solid var(--border-dk); border-radius:var(--r); padding:5px 10px; font-family:'Pixelify Sans',monospace; font-size:.55rem; cursor:pointer; transition:background .12s; }
   .btn-pass:hover { background:var(--border); }
-  .notif-time { font-family:'Pixelify Sans',monospace; font-size:.48rem; color:var(--ink-faint); margin-top:7px; }
+  .notif-time { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); margin-top:7px; }
 
   .match-card { background:var(--white); border:2px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:10px; border-top:3px solid var(--sage); }
   .match-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
@@ -199,7 +199,7 @@ const STYLE = `
   .contact-box { background:var(--page); border:2px solid var(--border); border-radius:var(--r); padding:11px 13px; }
   .contact-row { display:flex; align-items:center; gap:9px; }
   .contact-icon { width:26px; height:26px; border-radius:2px; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:.8rem; flex-shrink:0; }
-  .contact-label { font-family:'Pixelify Sans',monospace; font-size:.48rem; color:var(--ink-faint); display:block; }
+  .contact-label { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); display:block; }
   .contact-value { font-family:'EB Garamond',serif; font-size:.95rem; color:var(--ink); font-weight:500; }
 
   .empty-state { text-align:center; padding:56px 18px; color:var(--ink-faint); }
