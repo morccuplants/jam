@@ -148,7 +148,7 @@ router.get('/notifications', requireAuth, async (req, res) => {
 
     const notifications = result.rows.map(r => ({
       id: r.id,
-      from: profilePublic(r),
+      from: { ...profilePublic(r), id: r.chooser_id },
       time: formatTime(r.created_at),
       pending: !r.my_choice_id,
       matched: !!r.match_id,
