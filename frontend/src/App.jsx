@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import {
   apiRegister, apiLogin, apiGetMe, apiUpdateMe, apiUploadPhoto,
   apiGetDiscover, apiChoose, apiGetNotifications, apiRespond, apiGetMatches,
-  apiGetMessages, apiSendMessage, apiDateResponse,
 } from "./api.js";
 import { requestPushPermission } from "./push.js";
 
@@ -228,69 +227,6 @@ const STYLE = `
 
   .login-toggle { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.55rem; color:var(--ink-faint); margin-top:14px; }
   .login-toggle button { background:none; border:none; color:var(--pink-dk); cursor:pointer; font-size:.55rem; text-decoration:underline; padding:0; font-family:'Pixelify Sans',monospace; }
-
-  /* ── Chat Panel ── */
-  .chat-panel { position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; background:var(--cream); max-width:480px; margin:0 auto; animation:slideUp .25s ease forwards; border-left:2px solid var(--border-dk); border-right:2px solid var(--border-dk); }
-  .chat-header { display:flex; align-items:center; gap:10px; padding:11px 14px; background:var(--ink); border-bottom:2px solid var(--border-dk); flex-shrink:0; }
-  .chat-back { background:transparent; border:2px solid var(--border-dk); color:var(--cream); width:28px; height:28px; border-radius:var(--r); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:.8rem; transition:border-color .12s; flex-shrink:0; }
-  .chat-back:hover { border-color:var(--pink); color:var(--pink); }
-  .chat-header-avatar { width:32px; height:32px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.9rem; background:var(--page); }
-  .chat-header-avatar img { width:100%; height:100%; object-fit:cover; }
-  .chat-header-info { flex:1; min-width:0; }
-  .chat-header-name { font-family:'EB Garamond',serif; font-size:1.05rem; font-style:italic; color:var(--cream); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .chat-header-sub { font-family:'Pixelify Sans',monospace; font-size:.48rem; color:var(--pink); }
-
-  .msg-counter { padding:6px 14px; background:var(--page); border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; }
-  .msg-bar-wrap { flex:1; height:5px; background:var(--border); overflow:hidden; }
-  .msg-bar-fill { height:100%; transition:width .3s ease, background .3s ease; }
-  .msg-bar-fill.plenty  { background:var(--sage); }
-  .msg-bar-fill.low     { background:var(--peach); }
-  .msg-bar-fill.danger  { background:var(--pink-dk); }
-  .msg-count-label { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); white-space:nowrap; flex-shrink:0; }
-
-  .date-confirmed-bar { padding:7px 14px; background:#f0faf0; border-bottom:2px solid var(--sage); display:flex; align-items:center; gap:7px; flex-shrink:0; }
-  .date-confirmed-bar span { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:#4a7a4a; }
-  .date-confirmed-bar strong { font-family:'EB Garamond',serif; font-size:.88rem; color:#2a5a2a; font-weight:500; }
-
-  .chat-messages { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:8px; }
-  .chat-day-label { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.48rem; color:var(--ink-faint); margin:4px 0; }
-
-  .bubble-row { display:flex; align-items:flex-end; gap:6px; }
-  .bubble-row.mine { justify-content:flex-end; }
-  .bubble-row.theirs { justify-content:flex-start; }
-  .bubble { max-width:72%; padding:8px 11px; border-radius:var(--r); font-family:'EB Garamond',serif; font-size:.97rem; line-height:1.5; }
-  .bubble.mine { background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-bottom-right-radius:0; }
-  .bubble.theirs { background:var(--white); color:var(--ink); border:2px solid var(--border); border-bottom-left-radius:0; }
-  .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.42rem; color:var(--ink-faint); margin-top:3px; display:block; text-align:right; }
-  .bubble-avatar { width:22px; height:22px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.6rem; background:var(--page); }
-  .bubble-avatar img { width:100%; height:100%; object-fit:cover; }
-
-  .date-prompt-card { background:var(--white); border:2px solid var(--pink-dk); border-left:4px solid var(--pink-dk); border-radius:var(--r); padding:13px 14px; margin:4px 0; }
-  .date-prompt-title { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--pink-dk); margin-bottom:5px; }
-  .date-prompt-text { font-family:'EB Garamond',serif; font-size:.95rem; color:var(--ink); line-height:1.55; margin-bottom:11px; font-style:italic; }
-  .date-prompt-actions { display:flex; gap:7px; }
-  .btn-yes { flex:1; padding:9px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
-  .btn-yes:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
-  .btn-yes:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
-  .btn-no  { flex:1; padding:9px; background:var(--page); color:var(--ink-light); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
-  .btn-no:hover { background:var(--border); }
-  .date-prompt-waiting { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:var(--ink-faint); margin-top:6px; }
-
-  .unmatch-notice { background:#fdf0f0; border:2px solid #e0b0b0; border-radius:var(--r); padding:16px; text-align:center; margin:6px 0; }
-  .unmatch-notice .icon { font-size:1.6rem; margin-bottom:6px; }
-  .unmatch-notice p { font-family:'EB Garamond',serif; font-size:.95rem; color:#8a3030; line-height:1.6; font-style:italic; }
-
-  .chat-input-bar { padding:10px 12px; border-top:2px solid var(--border-dk); background:var(--page); display:flex; gap:8px; align-items:flex-end; flex-shrink:0; }
-  .chat-input { flex:1; background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:9px 12px; font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink); outline:none; resize:none; max-height:90px; line-height:1.45; transition:border-color .12s; }
-  .chat-input:focus { border-color:var(--pink-dk); }
-  .chat-input:disabled { background:var(--border); color:var(--ink-faint); cursor:not-allowed; }
-  .chat-send-btn { padding:9px 14px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.62rem; cursor:pointer; transition:background .12s; flex-shrink:0; align-self:flex-end; }
-  .chat-send-btn:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
-  .chat-send-btn:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
-
-  .open-chat-btn { width:100%; margin-top:10px; padding:9px; background:var(--page); color:var(--ink); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
-  .open-chat-btn:hover { background:var(--border); }
-  .open-chat-btn.has-unread { border-color:var(--pink-dk); color:var(--pink-dk); background:#fdf6fa; }
 `;
 
 const CITIES = [
@@ -409,8 +345,8 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   const [step,setStep]=useState(0);const [photoFile,setPhotoFile]=useState(null);const [photoPreview,setPhotoPreview]=useState(null);
   const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [name,setName]=useState('');const [age,setAge]=useState('');
   const [gender,setGender]=useState('');const [seeking,setSeeking]=useState('');const [ageMin,setAgeMin]=useState('22');const [ageMax,setAgeMax]=useState('35');
-  const [bio,setBio]=useState('');const [city,setCity]=useState('');const [contactType,setContactType]=useState('Instagram');const [contactValue,setContactValue]=useState('');
-  const [error,setError]=useState('');const [loading,setLoading]=useState(false);const TOTAL=7;
+  const [bio,setBio]=useState('');const [city,setCity]=useState('');
+  const [error,setError]=useState('');const [loading,setLoading]=useState(false);const TOTAL=6;
 
   function handlePhotoChange(e){const file=e.target.files[0];if(!file)return;setPhotoFile(file);const r=new FileReader();r.onload=ev=>setPhotoPreview(ev.target.result);r.readAsDataURL(file);}
 
@@ -418,14 +354,13 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
     if(step===0)return true;if(step===1)return email.includes('@')&&password.length>=8;
     if(step===2)return name.trim().length>=2&&parseInt(age)>=18&&parseInt(age)<=99;
     if(step===3)return!!gender&&!!seeking&&parseInt(ageMin)>=18&&parseInt(ageMax)<=99&&parseInt(ageMin)<=parseInt(ageMax);
-    if(step===4)return bio.trim().length>=20;if(step===5)return!!city;if(step===6)return contactValue.trim().length>=2;return true;
+    if(step===4)return bio.trim().length>=20;if(step===5)return!!city;return true;
   }
 
   async function finish(){
     setError('');setLoading(true);
     try{
-      const ci=CONTACT_TYPES.find(c=>c.type===contactType);
-      const{token,user}=await apiRegister({email,password,name:name.trim(),age:parseInt(age),gender,seeking,ageMin:parseInt(ageMin),ageMax:parseInt(ageMax),bio:bio.trim(),city,contactType,contactIcon:ci?.icon||'💬',contactValue:contactValue.trim()});
+      const{token,user}=await apiRegister({email,password,name:name.trim(),age:parseInt(age),gender,seeking,ageMin:parseInt(ageMin),ageMax:parseInt(ageMax),bio:bio.trim(),city,contactType:'',contactIcon:'',contactValue:''});
       localStorage.setItem('bmj_token',token);
       if(photoFile){try{const{photoUrl:url}=await apiUploadPhoto(photoFile);user.photoUrl=url;}catch{}}
       onComplete(user);
@@ -444,9 +379,8 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
         {step===2&&<div className="ob-step" key="s2"><div className="ob-step-num">step 3 of {TOTAL}</div><div className="ob-step-title">Nice to <em>meet</em> you</div><div className="ob-step-sub">What should people call you?</div><label className="ob-label">First name</label><input className="ob-input" placeholder="e.g. Margot" value={name} onChange={e=>setName(e.target.value)} maxLength={30} /><label className="ob-label">Age</label><input className="ob-input" type="number" placeholder="e.g. 28" value={age} onChange={e=>setAge(e.target.value)} min={18} max={99} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(1)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(3)}>continue →</button></div></div>}
         {step===3&&<div className="ob-step" key="s3"><div className="ob-step-num">step 4 of {TOTAL}</div><div className="ob-step-title">Who are you <em>seeking?</em></div><div className="ob-step-sub">This shapes the profiles you'll see each day.</div><GenderPicker label="I am a" value={gender} onChange={setGender} /><GenderPicker label="Looking for" value={seeking} onChange={setSeeking} /><label className="ob-label">Age range I'm open to</label><div className="range-row"><input className="ob-input" type="number" placeholder="Min" value={ageMin} onChange={e=>setAgeMin(e.target.value)} min={18} max={99} /><span className="range-sep">to</span><input className="ob-input" type="number" placeholder="Max" value={ageMax} onChange={e=>setAgeMax(e.target.value)} min={18} max={99} /></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(2)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(4)}>continue →</button></div></div>}
         {step===4&&<div className="ob-step" key="s4"><div className="ob-step-num">step 5 of {TOTAL}</div><div className="ob-step-title">Your <em>story</em> in a paragraph</div><div className="ob-step-sub">Not a dating resume. More like the opening of a good short story.</div><label className="ob-label">About you</label><textarea className="ob-textarea" rows={5} placeholder="e.g. I make ceramics by hand..." value={bio} onChange={e=>setBio(e.target.value)} maxLength={280} /><div className="char-count">{bio.length}/280</div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(3)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(5)}>continue →</button></div></div>}
-        {step===5&&<div className="ob-step" key="s5"><div className="ob-step-num">step 6 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(4)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(6)}>continue →</button></div></div>}
-        {step===6&&<div className="ob-step" key="s6"><div className="ob-step-num">step 7 of {TOTAL}</div><div className="ob-step-title">How should <em>matches</em> reach you?</div><div className="ob-step-sub">Revealed only when you both choose each other.</div><label className="ob-label">Platform</label><ContactTypePicker value={contactType} onChange={setContactType} /><label className="ob-label">Your handle or address</label><input className="ob-input" placeholder={contactType==="Email"?"you@example.com":`@your${contactType.toLowerCase()}`} value={contactValue} onChange={e=>setContactValue(e.target.value)} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(5)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(7)}>review →</button></div></div>}
-        {step===7&&<div className="ob-step" key="s7"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':'women'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div><div className="review-contact">{CONTACT_TYPES.find(c=>c.type===contactType)?.icon} {contactType}: hidden until matched</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(6)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
+        {step===5&&<div className="ob-step" key="s5"><div className="ob-step-num">step 6 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(4)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(6)}>review →</button></div></div>}
+        {step===6&&<div className="ob-step" key="s6"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':'women'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(5)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
       </div>
     </div>
   );
@@ -490,246 +424,10 @@ function EditProfilePanel({ user, onSave, onClose }) {
   );
 }
 
-const MAX_MSGS = 20;
-const WARN_AT  = 10; // show date prompt when this many left
-
-function formatTime(ts) {
-  const d = new Date(ts);
-  return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-}
-
-function ChatPanel({ match, user, onClose, onUnmatch }) {
-  const [messages, setMessages]         = useState([]);
-  const [draft, setDraft]               = useState('');
-  const [sending, setSending]           = useState(false);
-  const [loading, setLoading]           = useState(true);
-  // myRemaining: how many messages I have left to send
-  const [myRemaining, setMyRemaining]   = useState(MAX_MSGS);
-  // datePrompt: null | 'pending' | 'i_said_yes' | 'i_said_no' | 'confirmed' | 'declined'
-  const [dateStatus, setDateStatus]     = useState(match.dateStatus || null);
-  const [dateDetails, setDateDetails]   = useState(match.dateDetails || null);
-  const [dateResponding, setDateResponding] = useState(false);
-  const bottomRef = useRef();
-  const inputRef  = useRef();
-
-  // Load messages on mount and poll
-  const loadMessages = useCallback(async () => {
-    try {
-      const data = await apiGetMessages(match.id);
-      setMessages(data.messages || []);
-      setMyRemaining(data.myRemaining ?? MAX_MSGS);
-      setDateStatus(data.dateStatus || null);
-      setDateDetails(data.dateDetails || null);
-    } catch {}
-    finally { setLoading(false); }
-  }, [match.id]);
-
-  useEffect(() => { loadMessages(); }, [loadMessages]);
-  useEffect(() => {
-    const t = setInterval(loadMessages, 5000);
-    return () => clearInterval(t);
-  }, [loadMessages]);
-
-  // Auto-scroll to bottom
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  async function sendMessage() {
-    const text = draft.trim();
-    if (!text || sending || myRemaining <= 0) return;
-    setSending(true);
-    const optimistic = { id: Date.now(), senderId: user.id, text, ts: Date.now(), optimistic: true };
-    setMessages(prev => [...prev, optimistic]);
-    setMyRemaining(prev => prev - 1);
-    setDraft('');
-    try {
-      const data = await apiSendMessage(match.id, text);
-      setMessages(data.messages || []);
-      setMyRemaining(data.myRemaining ?? myRemaining - 1);
-      setDateStatus(data.dateStatus || dateStatus);
-    } catch (err) {
-      setMessages(prev => prev.filter(m => m.id !== optimistic.id));
-      setMyRemaining(prev => prev + 1);
-      setDraft(text);
-      alert(err.message);
-    }
-    finally { setSending(false); inputRef.current?.focus(); }
-  }
-
-  async function respondDate(yes) {
-    setDateResponding(true);
-    try {
-      const data = await apiDateResponse(match.id, yes);
-      setDateStatus(data.dateStatus);
-      setDateDetails(data.dateDetails || null);
-      if (data.dateStatus === 'declined' && data.unmatched) {
-        onUnmatch(match.id);
-      }
-    } catch (err) { alert(err.message); }
-    finally { setDateResponding(false); }
-  }
-
-  function handleKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  }
-
-  const barPct   = Math.max(0, (myRemaining / MAX_MSGS) * 100);
-  const barClass = myRemaining > 12 ? 'plenty' : myRemaining > 5 ? 'low' : 'danger';
-  const isOut    = myRemaining <= 0;
-  const isUnmatched = dateStatus === 'declined';
-  const showDatePrompt = dateStatus === 'pending' || dateStatus === 'i_said_yes';
-  const canSend  = !isOut && !isUnmatched && dateStatus !== 'declined';
-
-  // Show the date prompt inline only once (as a system card in messages stream)
-  const shouldShowPrompt = myRemaining <= WARN_AT && !['confirmed','declined'].includes(dateStatus) && !isOut;
-
-  return (
-    <div className="chat-panel">
-      {/* Header */}
-      <div className="chat-header">
-        <button className="chat-back" onClick={onClose}>←</button>
-        <div className="chat-header-avatar">
-          {match.partner.photoUrl
-            ? <img src={photoUrl(match.partner.photoUrl)} alt={match.partner.name} />
-            : '🌟'}
-        </div>
-        <div className="chat-header-info">
-          <div className="chat-header-name">{match.partner.name}</div>
-          <div className="chat-header-sub">{match.partner.age} · {match.partner.city}</div>
-        </div>
-      </div>
-
-      {/* Message counter or date confirmed bar */}
-      {dateStatus === 'confirmed' ? (
-        <div className="date-confirmed-bar">
-          <span>📅 date set —</span>
-          <strong>{dateDetails || 'details in chat'}</strong>
-        </div>
-      ) : !isUnmatched && (
-        <div className="msg-counter">
-          <div className="msg-bar-wrap">
-            <div className={`msg-bar-fill ${barClass}`} style={{width:`${barPct}%`}} />
-          </div>
-          <div className="msg-count-label">
-            {isOut ? 'no messages left' : `${myRemaining} msg${myRemaining===1?'':'s'} left`}
-          </div>
-        </div>
-      )}
-
-      {/* Messages */}
-      <div className="chat-messages">
-        {loading && <div className="chat-day-label">loading...</div>}
-        {!loading && messages.length === 0 && (
-          <div className="chat-day-label">say hello — you have {MAX_MSGS} messages each</div>
-        )}
-
-        {messages.map((msg, i) => {
-          const mine = msg.senderId === user.id;
-          return (
-            <div key={msg.id || i} className={`bubble-row ${mine ? 'mine' : 'theirs'}`}>
-              {!mine && (
-                <div className="bubble-avatar">
-                  {match.partner.photoUrl ? <img src={photoUrl(match.partner.photoUrl)} alt="" /> : '🌟'}
-                </div>
-              )}
-              <div className={`bubble ${mine ? 'mine' : 'theirs'}`}>
-                {msg.text}
-                <span className="bubble-time">{formatTime(msg.ts)}</span>
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Date prompt — shown as inline card when warning threshold hit */}
-        {shouldShowPrompt && (
-          <div className="date-prompt-card">
-            <div className="date-prompt-title">⏳ running low</div>
-            <div className="date-prompt-text">
-              Have a date? Agree on a time and place now — if you run out of messages without setting a date, you'll unmatch.
-            </div>
-            {dateStatus === 'i_said_yes' ? (
-              <div className="date-prompt-waiting">✓ you said yes — waiting for {match.partner.name}…</div>
-            ) : dateStatus === 'pending' || !dateStatus ? (
-              <div className="date-prompt-actions">
-                <button className="btn-yes" disabled={dateResponding} onClick={() => respondDate(true)}>
-                  yes, we have a date ♥
-                </button>
-                <button className="btn-no" disabled={dateResponding} onClick={() => respondDate(false)}>
-                  not yet
-                </button>
-              </div>
-            ) : null}
-          </div>
-        )}
-
-        {/* Out of messages, no date */}
-        {isOut && dateStatus !== 'confirmed' && dateStatus !== 'declined' && (
-          <div className="date-prompt-card">
-            <div className="date-prompt-title">📭 messages used up</div>
-            <div className="date-prompt-text">
-              Did you two agree on a date?
-            </div>
-            {dateStatus === 'i_said_yes' ? (
-              <div className="date-prompt-waiting">✓ you said yes — waiting for {match.partner.name}…</div>
-            ) : (
-              <div className="date-prompt-actions">
-                <button className="btn-yes" disabled={dateResponding} onClick={() => respondDate(true)}>yes!</button>
-                <button className="btn-no"  disabled={dateResponding} onClick={() => respondDate(false)}>no</button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Unmatched tombstone */}
-        {isUnmatched && (
-          <div className="unmatch-notice">
-            <div className="icon">🕯️</div>
-            <p>This match has ended. No date was set before messages ran out.</p>
-          </div>
-        )}
-
-        {/* Date confirmed celebration */}
-        {dateStatus === 'confirmed' && (
-          <div className="date-prompt-card" style={{borderColor:'var(--sage)',borderLeftColor:'var(--sage)'}}>
-            <div className="date-prompt-title" style={{color:'#4a7a4a'}}>🎉 date confirmed!</div>
-            <div className="date-prompt-text">
-              You're both in. Use the remaining messages to sort out the details — or just show up.
-            </div>
-          </div>
-        )}
-
-        <div ref={bottomRef} />
-      </div>
-
-      {/* Input */}
-      <div className="chat-input-bar">
-        <textarea
-          ref={inputRef}
-          className="chat-input"
-          rows={1}
-          placeholder={isUnmatched ? 'match ended' : isOut ? 'no messages left' : 'say something…'}
-          value={draft}
-          onChange={e => setDraft(e.target.value)}
-          onKeyDown={handleKey}
-          disabled={!canSend}
-        />
-        <button
-          className="chat-send-btn"
-          disabled={!draft.trim() || !canSend || sending}
-          onClick={sendMessage}
-        >
-          send
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function MainApp({ user: initialUser, setUser }) {
   const [user,setLocalUser]=useState(initialUser);const [tab,setTab]=useState('discover');const [countdown,setCountdown]=useState(getTimeUntilNext2PM());
   const [profiles,setProfiles]=useState([]);const [chosenId,setChosenId]=useState(null);const [selected,setSelected]=useState(null);
-  const [notifications,setNotifications]=useState([]);const [matches,setMatches]=useState([]);const [editOpen,setEditOpen]=useState(false);const [openChat,setOpenChat]=useState(null); // match object
+  const [notifications,setNotifications]=useState([]);const [matches,setMatches]=useState([]);const [editOpen,setEditOpen]=useState(false);
   const [loadingDiscover,setLoadingDiscover]=useState(true);const [choosing,setChoosing]=useState(false);
 
   function updateUser(u){setLocalUser(u);setUser(u);}
@@ -743,17 +441,23 @@ function MainApp({ user: initialUser, setUser }) {
   useEffect(()=>{const t=setInterval(()=>setCountdown(getTimeUntilNext2PM()),1000);return()=>clearInterval(t);},[]);
 
   async function handleChoose(){if(!selected||choosing)return;setChoosing(true);try{const{matched}=await apiChoose(selected.id);setChosenId(selected.id);if(matched)await loadMatches();}catch(err){alert(err.message);}finally{setChoosing(false);}}
-  async function handleMatch(id){try{await apiRespond(id,true);await loadNotifications();await loadMatches();setTab('matches');}catch(err){alert(err.message);}}
+  async function handleMatch(id) {
+    try {
+      await apiRespond(id, true);
+      await loadNotifications(); await loadMatches();
+      setTab('matches');
+    } catch (err) { alert(err.message); }
+  }
   async function handlePass(id){await apiRespond(id,false);setNotifications(prev=>prev.map(n=>n.from.id===id?{...n,pending:false,passed:true}:n));}
 
   const pendingCount=notifications.filter(n=>n.pending).length;
+  const visibleNotifications=notifications.filter(n=>!n.matched);
   const chosenProfile=profiles.find(p=>p.id===chosenId);
 
   return (
     <>
       <div className="app">
         {editOpen&&<EditProfilePanel user={user} onSave={u=>{updateUser(u);setEditOpen(false);}} onClose={()=>setEditOpen(false)} />}
-        {openChat&&<ChatPanel match={openChat} user={user} onClose={()=>setOpenChat(null)} onUnmatch={id=>{setMatches(prev=>prev.filter(m=>m.id!==id));setOpenChat(null);}} />}
         <div className="header">
           <div className="header-band">
             <div><div className="logo">be my jam</div><span className="logo-sub">♥ {user.city} ♥</span></div>
@@ -782,8 +486,8 @@ function MainApp({ user: initialUser, setUser }) {
               <div className="section-title">You Were Chosen</div>
               <div className="section-sub">Match to reveal their contact.</div>
               <div className="notif-list">
-                {notifications.length===0&&<div className="empty-state"><div className="icon">💌</div><p>No one has chosen you yet.</p></div>}
-                {notifications.map(n=>(
+                {visibleNotifications.length===0&&<div className="empty-state"><div className="icon">💌</div><p>No one has chosen you yet.</p></div>}
+                {visibleNotifications.map(n=>(
                   <div key={n.id} className={`notif-card ${n.pending?'new':''}`}>
                     {n.pending&&<div className="notif-new-label">new</div>}
                     <div className="notif-avatar">{n.from.photoUrl?<img src={photoUrl(n.from.photoUrl)} alt={n.from.name} />:'🌟'}</div>
@@ -807,13 +511,10 @@ function MainApp({ user: initialUser, setUser }) {
                   <div className="matched-banner"><div className="heart">🍓</div><h3>You matched with {m.partner.name}</h3><p>you both chose each other — say hello!</p></div>
                   <div className="match-header">
                     <div className="match-avatar">{m.partner.photoUrl?<img src={photoUrl(m.partner.photoUrl)} alt={m.partner.name} />:'🌟'}</div>
-                    <div className="match-info"><h3>{m.partner.name}</h3><p>{m.partner.age} · {m.partner.city}</p><p style={{marginTop:4,fontSize:'.78rem',color:'var(--ink-light)',fontFamily:"'EB Garamond',serif",fontStyle:'italic'}}>{m.partner.bio?.slice(0,60)}…</p></div>
+                    <div className="match-info"><h3>{m.partner.name}</h3><p>{m.partner.age} · {m.partner.city}</p><p style={{marginTop:4,fontSize:'.88rem',color:'var(--ink-light)',fontFamily:"'EB Garamond',serif",fontStyle:'italic',lineHeight:1.6}}>{m.partner.bio}</p></div>
                   </div>
                   <div className="match-label">contact info</div>
                   <div className="contact-box"><div className="contact-row"><div className="contact-icon">{m.partner.contact.icon}</div><div><span className="contact-label">{m.partner.contact.type}</span><span className="contact-value">{m.partner.contact.value}</span></div></div></div>
-                  <button className={`open-chat-btn ${m.unreadCount>0?'has-unread':''}`} onClick={()=>setOpenChat(m)}>
-                    {m.unreadCount>0 ? `💬 ${m.unreadCount} new message${m.unreadCount===1?'':'s'}` : '💬 open chat'}
-                  </button>
                 </div>
               ))}
             </div>
