@@ -79,15 +79,15 @@ const STYLE = `
   .avatar-upload-circle img { width:100%; height:100%; object-fit:cover; }
   .avatar-upload-inner { display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--ink-faint); }
   .avatar-upload-inner .upload-icon { font-size:1.5rem; }
-  .avatar-upload-inner span { font-family:'Pixelify Sans',monospace; font-size:.6rem; }
+  .avatar-upload-inner span { font-family:'Pixelify Sans',monospace; font-size:.61rem; }
   .avatar-overlay { position:absolute; inset:0; background:rgba(255,255,255,.65); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .15s; border-radius:50%; font-size:1.2rem; }
   .avatar-upload-circle:hover .avatar-overlay { opacity:1; }
-  .avatar-hint { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--ink-faint); text-align:center; }
+  .avatar-hint { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); text-align:center; }
 
   .ob-label { display:block; font-family:'Pixelify Sans',monospace; font-size:.65rem; color:var(--ink-light); margin-bottom:8px; }
   .ob-input, .ob-textarea { width:100%; background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:11px 13px; color:var(--ink); font-family:'EB Garamond',serif; font-size:1rem; outline:none; resize:none; margin-bottom:18px; transition:border-color .12s; }
   .ob-input:focus, .ob-textarea:focus { border-color:var(--pink-dk); }
-  .char-count { text-align:right; font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--ink-faint); margin-top:-14px; margin-bottom:18px; }
+  .char-count { text-align:right; font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); margin-top:-14px; margin-bottom:18px; }
 
   .city-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:18px; }
   .city-opt { background:var(--white); border:2px solid var(--border); border-radius:var(--r); padding:11px 10px; cursor:pointer; transition:border-color .12s,background .12s; }
@@ -112,7 +112,7 @@ const STYLE = `
   .contact-type-opt:hover { border-color:var(--blue); background:#f4f7ff; }
   .contact-type-opt.selected { border-color:var(--pink-dk); background:#fdf0f6; }
   .contact-type-icon { font-size:1.1rem; display:block; margin-bottom:3px; }
-  .contact-type-label { font-family:'Pixelify Sans',monospace; font-size:.55rem; color:var(--ink-light); }
+  .contact-type-label { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-light); }
 
   .ob-nav { display:flex; gap:8px; margin-top:auto; padding-top:24px; }
   .ob-btn-primary { flex:1; padding:13px 18px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.68rem; cursor:pointer; transition:background .12s,border-color .12s; }
@@ -127,24 +127,24 @@ const STYLE = `
   .review-avatar img { width:100%; height:100%; object-fit:cover; }
   .review-avatar-placeholder { width:80px; height:80px; border-radius:50%; background:var(--page); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:6px auto 12px; border:2px solid var(--border-dk); }
   .review-name { font-family:'EB Garamond',serif; font-size:1.45rem; font-weight:400; margin-bottom:4px; }
-  .review-meta { font-family:'Pixelify Sans',monospace; font-size:.55rem; color:var(--ink-faint); margin-bottom:10px; }
+  .review-meta { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); margin-bottom:10px; }
   .review-desc { font-size:.92rem; color:var(--ink-light); line-height:1.7; margin-bottom:12px; font-style:italic; }
-  .review-contact { display:inline-flex; align-items:center; gap:5px; border:2px solid var(--border); border-radius:var(--r); padding:3px 10px; font-family:'Pixelify Sans',monospace; font-size:.52rem; color:var(--ink-light); }
+  .review-contact { display:inline-flex; align-items:center; gap:5px; border:2px solid var(--border); border-radius:var(--r); padding:3px 10px; font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-light); }
 
   /* ── Header ── */
   .header { border-bottom:2px solid var(--border-dk); }
   .header-band { background:var(--ink-light); padding:13px 18px 10px; display:flex; align-items:center; justify-content:space-between; }
   .logo { font-family:'EB Garamond',serif; font-size:1.6rem; font-weight:400; font-style:italic; color:var(--cream); }
-  .logo-sub { font-family:'Pixelify Sans',monospace; font-size:.6rem; color:var(--pink); display:block; margin-top:1px; letter-spacing:.06em; }
+  .logo-sub { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--pink); display:block; margin-top:1px; letter-spacing:.06em; }
   .my-avatar-btn { width:34px; height:34px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); cursor:pointer; background:var(--page); display:flex; align-items:center; justify-content:center; font-size:.95rem; transition:border-color .12s; flex-shrink:0; }
   .my-avatar-btn:hover { border-color:var(--pink); }
   .my-avatar-btn img { width:100%; height:100%; object-fit:cover; }
 
   .nav { display:flex; background:var(--page); border-bottom:2px solid var(--border-dk); padding:0; }
-  .nav-btn { background:none; border:none; border-right:1px solid var(--border); color:var(--ink-faint); font-family:'Pixelify Sans',monospace; font-size:.6rem; padding:9px 14px; cursor:pointer; position:relative; transition:color .12s,background .12s; }
+  .nav-btn { background:none; border:none; border-right:1px solid var(--border); color:var(--ink-faint); font-family:'Pixelify Sans',monospace; font-size:.61rem; padding:9px 14px; cursor:pointer; position:relative; transition:color .12s,background .12s; }
   .nav-btn:last-child { border-right:none; }
   .nav-btn.active { color:var(--ink); background:var(--cream); border-bottom:2px solid var(--pink-dk); margin-bottom:-2px; }
-  .badge { background:var(--pink-dk); color:var(--white); border-radius:2px; font-family:'Pixelify Sans',monospace; font-size:.45rem; padding:1px 5px; margin-left:4px; vertical-align:middle; }
+  .badge { background:var(--pink-dk); color:var(--white); border-radius:2px; font-family:'Pixelify Sans',monospace; font-size:.61rem; padding:1px 5px; margin-left:4px; vertical-align:middle; }
 
   /* ── Content ── */
   .content { flex:1; padding:22px 18px; }
@@ -161,7 +161,7 @@ const STYLE = `
   .avatar-placeholder { width:62px; height:62px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; background:var(--page); border:2px solid var(--border); }
   .avatar-img { width:62px; height:62px; border-radius:50%; object-fit:cover; border:2px solid var(--border); }
   .profile-name { font-family:'EB Garamond',serif; font-size:1.05rem; font-weight:500; margin-bottom:2px; }
-  .profile-age { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:var(--ink-faint); margin-bottom:5px; }
+  .profile-age { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); margin-bottom:5px; }
   .profile-desc { font-size:.78rem; color:var(--ink-light); line-height:1.5; font-style:italic; }
 
   .choose-btn { width:100%; margin-top:18px; padding:13px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.68rem; cursor:pointer; transition:background .12s; }
@@ -176,30 +176,30 @@ const STYLE = `
   .notif-list { display:flex; flex-direction:column; gap:8px; }
   .notif-card { background:var(--white); border:2px solid var(--border); border-radius:var(--r); padding:12px; display:flex; align-items:flex-start; gap:10px; position:relative; }
   .notif-card.new { border-color:var(--pink-dk); border-left:4px solid var(--pink-dk); background:#fdf6fa; }
-  .notif-new-label { position:absolute; top:-9px; left:10px; font-family:'Pixelify Sans',monospace; font-size:.5rem; background:var(--pink-dk); color:var(--white); padding:2px 6px; border-radius:2px; }
+  .notif-new-label { position:absolute; top:-9px; left:10px; font-family:'Pixelify Sans',monospace; font-size:.61rem; background:var(--pink-dk); color:var(--white); padding:2px 6px; border-radius:2px; }
   .notif-avatar { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; background:var(--page); border:2px solid var(--border); flex-shrink:0; overflow:hidden; }
   .notif-avatar img { width:100%; height:100%; object-fit:cover; }
   .notif-body { flex:1; }
   .notif-text { font-family:'EB Garamond',serif; font-size:.93rem; line-height:1.5; color:var(--ink); margin-bottom:8px; }
   .notif-text strong { font-weight:600; }
   .notif-actions { display:flex; gap:6px; }
-  .btn-match { background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); padding:5px 12px; font-family:'Pixelify Sans',monospace; font-size:.55rem; cursor:pointer; transition:background .12s; }
+  .btn-match { background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); padding:5px 12px; font-family:'Pixelify Sans',monospace; font-size:.61rem; cursor:pointer; transition:background .12s; }
   .btn-match:hover { background:var(--pink-dk); color:var(--white); }
-  .btn-pass { background:var(--page); color:var(--ink-light); border:2px solid var(--border-dk); border-radius:var(--r); padding:5px 10px; font-family:'Pixelify Sans',monospace; font-size:.55rem; cursor:pointer; transition:background .12s; }
+  .btn-pass { background:var(--page); color:var(--ink-light); border:2px solid var(--border-dk); border-radius:var(--r); padding:5px 10px; font-family:'Pixelify Sans',monospace; font-size:.61rem; cursor:pointer; transition:background .12s; }
   .btn-pass:hover { background:var(--border); }
-  .notif-time { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); margin-top:7px; }
+  .notif-time { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); margin-top:7px; }
 
   .match-card { background:var(--white); border:2px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:10px; border-top:3px solid var(--sage); }
   .match-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
   .match-avatar { width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; background:var(--page); border:2px solid var(--border); flex-shrink:0; overflow:hidden; }
   .match-avatar img { width:100%; height:100%; object-fit:cover; }
   .match-info h3 { font-family:'EB Garamond',serif; font-size:1.1rem; font-weight:400; margin-bottom:1px; }
-  .match-info p { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); }
-  .match-label { font-family:'Pixelify Sans',monospace; font-size:.55rem; letter-spacing:.08em; color:var(--ink-faint); margin-bottom:7px; }
+  .match-info p { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); }
+  .match-label { font-family:'Pixelify Sans',monospace; font-size:.61rem; letter-spacing:.08em; color:var(--ink-faint); margin-bottom:7px; }
   .contact-box { background:var(--page); border:2px solid var(--border); border-radius:var(--r); padding:11px 13px; }
   .contact-row { display:flex; align-items:center; gap:9px; }
   .contact-icon { width:26px; height:26px; border-radius:2px; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:.8rem; flex-shrink:0; }
-  .contact-label { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); display:block; }
+  .contact-label { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); display:block; }
   .contact-value { font-family:'EB Garamond',serif; font-size:.95rem; color:var(--ink); font-weight:500; }
 
   .empty-state { text-align:center; padding:56px 18px; color:var(--ink-faint); }
@@ -209,7 +209,7 @@ const STYLE = `
   .matched-banner { background:var(--page); border:2px solid var(--border); border-radius:var(--r); padding:14px; text-align:center; margin-bottom:12px; border-left:4px solid var(--pink-dk); }
   .matched-banner .heart { font-size:1.4rem; }
   .matched-banner h3 { font-family:'EB Garamond',serif; font-size:1.1rem; font-weight:400; margin:5px 0 2px; }
-  .matched-banner p { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:var(--ink-faint); }
+  .matched-banner p { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); }
 
   /* ── Profile Panel ── */
   .profile-panel { position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; background:var(--cream); max-width:480px; margin:0 auto; animation:slideUp .25s ease forwards; overflow-y:auto; border-left:2px solid var(--border-dk); border-right:2px solid var(--border-dk); }
@@ -221,13 +221,13 @@ const STYLE = `
   .panel-save-btn { width:100%; padding:13px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.68rem; cursor:pointer; transition:background .12s; margin-top:2px; }
   .panel-save-btn:hover { background:var(--pink-dk); color:var(--white); }
 
-  .error-msg { background:#fdf0f0; border:2px solid #e0b0b0; border-radius:var(--r); padding:9px 13px; font-family:'Pixelify Sans',monospace; font-size:.55rem; color:#c03030; margin-bottom:14px; }
+  .error-msg { background:#fdf0f0; border:2px solid #e0b0b0; border-radius:var(--r); padding:9px 13px; font-family:'Pixelify Sans',monospace; font-size:.61rem; color:#c03030; margin-bottom:14px; }
 
   .loading-screen { display:flex; align-items:center; justify-content:center; height:100vh; flex-direction:column; gap:14px; background:var(--page); }
   .loading-cursor { font-family:'Pixelify Sans',monospace; font-size:1.1rem; color:var(--pink-dk); animation:blink 1s step-end infinite; }
 
-  .login-toggle { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.55rem; color:var(--ink-faint); margin-top:14px; }
-  .login-toggle button { background:none; border:none; color:var(--pink-dk); cursor:pointer; font-size:.55rem; text-decoration:underline; padding:0; font-family:'Pixelify Sans',monospace; }
+  .login-toggle { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); margin-top:14px; }
+  .login-toggle button { background:none; border:none; color:var(--pink-dk); cursor:pointer; font-size:.61rem; text-decoration:underline; padding:0; font-family:'Pixelify Sans',monospace; }
 
   /* ── Chat Panel ── */
   .chat-panel { position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; background:var(--cream); max-width:480px; margin:0 auto; animation:slideUp .25s ease forwards; border-left:2px solid var(--border-dk); border-right:2px solid var(--border-dk); }
@@ -238,7 +238,7 @@ const STYLE = `
   .chat-header-avatar img { width:100%; height:100%; object-fit:cover; }
   .chat-header-info { flex:1; min-width:0; }
   .chat-header-name { font-family:'EB Garamond',serif; font-size:1.2rem; font-style:italic; color:var(--cream); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .chat-header-sub { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--pink); }
+  .chat-header-sub { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--pink); }
 
   .msg-counter { padding:6px 14px; background:var(--page); border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; }
   .msg-bar-wrap { flex:1; height:5px; background:var(--border); overflow:hidden; }
@@ -249,19 +249,19 @@ const STYLE = `
   .msg-count-label { font-family:'Pixelify Sans',monospace; font-size:.62rem; color:var(--ink-faint); white-space:nowrap; flex-shrink:0; }
 
   .date-confirmed-bar { padding:7px 14px; background:#f0faf0; border-bottom:2px solid var(--sage); display:flex; align-items:center; gap:7px; flex-shrink:0; }
-  .date-confirmed-bar span { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:#4a7a4a; }
+  .date-confirmed-bar span { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:#4a7a4a; }
   .date-confirmed-bar strong { font-family:'EB Garamond',serif; font-size:.88rem; color:#2a5a2a; font-weight:500; }
 
   .chat-messages { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:8px; }
-  .chat-day-label { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--ink-faint); margin:4px 0; }
+  .chat-day-label { text-align:center; font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); margin:4px 0; }
 
   .bubble-row { display:flex; align-items:flex-end; gap:6px; }
   .bubble-row.mine { justify-content:flex-end; }
   .bubble-row.theirs { justify-content:flex-start; }
   .bubble { max-width:78%; padding:10px 14px; border-radius:5px; font-family:'EB Garamond',serif; font-size:1.1rem; line-height:1.55; }
-  .bubble.mine { background:var(--sage); color:var(--ink); border:2px solid var(--pink-dk); border-bottom-right-radius:0; }
+  .bubble.mine { background:#d4e8d4; color:var(--ink); border:2px solid var(--sage); border-bottom-right-radius:0; }
   .bubble.theirs { background:var(--white); color:var(--ink); border:2px solid var(--border); border-bottom-left-radius:0; }
-  .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); margin-top:4px; display:block; text-align:right; }
+  .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); margin-top:4px; display:block; text-align:right; }
   .bubble-avatar { width:35px; height:35px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; background:var(--page); }
   .bubble-avatar img { width:100%; height:100%; object-fit:cover; }
 
@@ -504,6 +504,7 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
   const [dateStatus, setDateStatus]       = useState(match.dateStatus || null);
   const [dateDetails, setDateDetails]     = useState(match.dateDetails || null);
   const [dateResponding, setDateResponding] = useState(false);
+  const messagesRef = useRef();
   const bottomRef = useRef();
   const inputRef  = useRef();
 
@@ -520,7 +521,12 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
 
   useEffect(() => { loadMessages(); }, [loadMessages]);
   useEffect(() => { const t = setInterval(loadMessages, 5000); return () => clearInterval(t); }, [loadMessages]);
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:'smooth' }); }, [messages]);
+  useEffect(() => {
+    const el = messagesRef.current;
+    if (!el) return;
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    if (isNearBottom) bottomRef.current?.scrollIntoView({ behavior:'smooth' });
+  }, [messages]);
 
   async function sendMessage() {
     const text = draft.trim();
@@ -595,7 +601,7 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
         </div>
       )}
 
-      <div className="chat-messages">
+      <div className="chat-messages" ref={messagesRef}>
         {loading && <div className="chat-day-label">loading…</div>}
         {!loading && messages.length === 0 && (
           <div className="chat-day-label">say hello — you have {MAX_MSGS} messages each</div>
