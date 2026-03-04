@@ -262,7 +262,7 @@ const STYLE = `
   .bubble.mine { background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-bottom-right-radius:0; }
   .bubble.theirs { background:var(--white); color:var(--ink); border:2px solid var(--border); border-bottom-left-radius:0; }
   .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); margin-top:4px; display:block; text-align:right; }
-  .bubble-avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; background:var(--page); }
+  .bubble-avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; background:var(--page); }
   .bubble-avatar img { width:100%; height:100%; object-fit:cover; }
 
   .date-prompt-card { background:var(--white); border:2px solid var(--pink-dk); border-left:4px solid var(--pink-dk); border-radius:var(--r); padding:13px 14px; margin:4px 0; }
