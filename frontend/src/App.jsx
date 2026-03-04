@@ -34,7 +34,7 @@ const STYLE = `
     color: var(--ink);
     font-family: 'EB Garamond', Georgia, serif;
     min-height: 100vh;
-    font-size: 17px;
+    font-size: 19px;
     line-height: 1.6;
   }
 
@@ -266,15 +266,15 @@ const STYLE = `
   .bubble-avatar img { width:100%; height:100%; object-fit:cover; }
 
   .date-prompt-card { background:var(--white); border:2px solid var(--pink-dk); border-left:4px solid var(--pink-dk); border-radius:var(--r); padding:13px 14px; margin:4px 0; }
-  .date-prompt-title { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--pink-dk); margin-bottom:5px; }
+  .date-prompt-title { font-family:'Pixelify Sans',monospace; font-size:.65rem; color:var(--pink-dk); margin-bottom:5px; }
   .date-prompt-text { font-family:'EB Garamond',serif; font-size:.95rem; color:var(--ink); line-height:1.55; margin-bottom:11px; font-style:italic; }
   .date-prompt-actions { display:flex; gap:7px; }
-  .btn-yes { flex:1; padding:9px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
+  .btn-yes { flex:1; padding:9px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.65rem; cursor:pointer; transition:background .12s; }
   .btn-yes:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
   .btn-yes:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
-  .btn-no { flex:1; padding:9px; background:var(--page); color:var(--ink-light); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
+  .btn-no { flex:1; padding:9px; background:var(--page); color:var(--ink-light); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.65rem; cursor:pointer; transition:background .12s; }
   .btn-no:hover { background:var(--border); }
-  .date-prompt-waiting { font-family:'Pixelify Sans',monospace; font-size:.52rem; color:var(--ink-faint); margin-top:6px; }
+  .date-prompt-waiting { font-family:'Pixelify Sans',monospace; font-size:.61rem; color:var(--ink-faint); margin-top:6px; }
 
   .unmatch-notice { background:#fdf0f0; border:2px solid #e0b0b0; border-radius:var(--r); padding:16px; text-align:center; margin:6px 0; }
   .unmatch-notice .icon { font-size:1.6rem; margin-bottom:6px; }
@@ -288,7 +288,7 @@ const STYLE = `
   .chat-send-btn:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
   .chat-send-btn:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
 
-  .open-chat-btn { width:100%; margin-top:10px; padding:9px; background:var(--page); color:var(--ink); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.6rem; cursor:pointer; transition:background .12s; }
+  .open-chat-btn { width:100%; margin-top:10px; padding:9px; background:var(--page); color:var(--ink); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.65rem; cursor:pointer; transition:background .12s; }
   .open-chat-btn:hover { background:var(--border); }
   .open-chat-btn.has-unread { border-color:var(--pink-dk); color:var(--pink-dk); background:#fdf6fa; }
 `;
