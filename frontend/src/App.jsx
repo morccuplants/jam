@@ -59,7 +59,7 @@ const STYLE = `
   .ob-progress { display:flex; gap:3px; margin-bottom:28px; }
 
   .ob-intro { flex:1; display:flex; flex-direction:column; animation:fadeInUp .3s ease forwards; }
-  .ob-intro-logo { display:block; width:72px; height:72px; object-fit:contain; margin:0 auto 18px; }
+  .ob-intro-logo { display:block; width:72px; height:72px; border-radius:50%; object-fit:contain; margin:0 auto 18px; }
   .ob-intro-heading { font-family:'Pixelify Sans',monospace; font-size:.7rem; color:var(--pink-dk); letter-spacing:.1em; margin-bottom:6px; }
   .ob-intro-title { font-family:'EB Garamond',serif; font-size:2rem; font-weight:400; line-height:1.2; margin-bottom:20px; }
   .ob-intro-title em { font-style:italic; color:var(--pink-dk); }
@@ -624,7 +624,7 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
 
       {dateStatus === 'confirmed' ? (
         <div className="date-confirmed-bar">
-          <span>📅 date set —</span>
+          <span>📅 you have a date! —</span>
           <strong>{dateDetails || 'details in chat'}</strong>
         </div>
       ) : !isUnmatched && (
