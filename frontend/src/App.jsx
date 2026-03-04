@@ -259,7 +259,7 @@ const STYLE = `
   .bubble-row.mine { justify-content:flex-end; }
   .bubble-row.theirs { justify-content:flex-start; }
   .bubble { max-width:78%; padding:10px 14px; border-radius:5px; font-family:'EB Garamond',serif; font-size:1.1rem; line-height:1.55; }
-  .bubble.mine { background:var(--pink); color:var(--ink); border:2px solid var(--peach); border-bottom-right-radius:0; }
+  .bubble.mine { background:var(--peach); color:var(--ink); border:2px solid var(--pink-dk); border-bottom-right-radius:0; }
   .bubble.theirs { background:var(--white); color:var(--ink); border:2px solid var(--border); border-bottom-left-radius:0; }
   .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); margin-top:4px; display:block; text-align:right; }
   .bubble-avatar { width:35px; height:35px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; background:var(--page); }
