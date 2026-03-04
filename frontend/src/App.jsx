@@ -34,7 +34,7 @@ const STYLE = `
     color: var(--ink);
     font-family: 'EB Garamond', Georgia, serif;
     min-height: 100vh;
-    font-size: 19px;
+    font-size: 22px;
     line-height: 1.6;
   }
 
