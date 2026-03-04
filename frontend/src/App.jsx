@@ -234,7 +234,7 @@ const STYLE = `
   .chat-header { display:flex; align-items:center; gap:10px; padding:11px 14px; background:var(--ink); border-bottom:2px solid var(--border-dk); flex-shrink:0; }
   .chat-back { background:transparent; border:2px solid var(--border-dk); color:var(--cream); width:28px; height:28px; border-radius:var(--r); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:.8rem; transition:border-color .12s; flex-shrink:0; }
   .chat-back:hover { border-color:var(--pink); color:var(--pink); }
-  .chat-header-avatar { width:32px; height:32px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.9rem; background:var(--page); }
+  .chat-header-avatar { width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.9rem; background:var(--page); }
   .chat-header-avatar img { width:100%; height:100%; object-fit:cover; }
   .chat-header-info { flex:1; min-width:0; }
   .chat-header-name { font-family:'EB Garamond',serif; font-size:1.2rem; font-style:italic; color:var(--cream); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -259,10 +259,10 @@ const STYLE = `
   .bubble-row.mine { justify-content:flex-end; }
   .bubble-row.theirs { justify-content:flex-start; }
   .bubble { max-width:78%; padding:10px 14px; border-radius:5px; font-family:'EB Garamond',serif; font-size:1.1rem; line-height:1.55; }
-  .bubble.mine { background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-bottom-right-radius:0; }
+  .bubble.mine { background:var(--pink); color:var(--ink); border:2px solid var(--peach); border-bottom-right-radius:0; }
   .bubble.theirs { background:var(--white); color:var(--ink); border:2px solid var(--border); border-bottom-left-radius:0; }
   .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); margin-top:4px; display:block; text-align:right; }
-  .bubble-avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; background:var(--page); }
+  .bubble-avatar { width:35px; height:35px; border-radius:50%; overflow:hidden; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; background:var(--page); }
   .bubble-avatar img { width:100%; height:100%; object-fit:cover; }
 
   .date-prompt-card { background:var(--white); border:2px solid var(--pink-dk); border-left:4px solid var(--pink-dk); border-radius:var(--r); padding:13px 14px; margin:4px 0; }
