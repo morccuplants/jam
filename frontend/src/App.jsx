@@ -258,7 +258,7 @@ const STYLE = `
   .bubble-row { display:flex; align-items:flex-end; gap:6px; }
   .bubble-row.mine { justify-content:flex-end; }
   .bubble-row.theirs { justify-content:flex-start; }
-  .bubble { max-width:78%; padding:10px 14px; border-radius:var(5px); font-family:'EB Garamond',serif; font-size:1.1rem; line-height:1.55; }
+  .bubble { max-width:78%; padding:10px 14px; border-radius:5px; font-family:'EB Garamond',serif; font-size:1.1rem; line-height:1.55; }
   .bubble.mine { background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-bottom-right-radius:0; }
   .bubble.theirs { background:var(--white); color:var(--ink); border:2px solid var(--border); border-bottom-left-radius:0; }
   .bubble-time { font-family:'Pixelify Sans',monospace; font-size:.5rem; color:var(--ink-faint); margin-top:4px; display:block; text-align:right; }
