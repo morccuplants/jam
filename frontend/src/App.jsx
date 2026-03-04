@@ -57,7 +57,16 @@ const STYLE = `
 
   /* ── Onboarding ── */
   .ob-progress { display:flex; gap:3px; margin-bottom:28px; }
-  .ob-pip { height:5px; flex:1; border-radius:0; background:var(--border); }
+
+  .ob-intro { flex:1; display:flex; flex-direction:column; animation:fadeInUp .3s ease forwards; }
+  .ob-intro-logo { display:block; width:72px; height:72px; object-fit:contain; margin:0 auto 18px; }
+  .ob-intro-heading { font-family:'Pixelify Sans',monospace; font-size:.7rem; color:var(--pink-dk); letter-spacing:.1em; margin-bottom:6px; }
+  .ob-intro-title { font-family:'EB Garamond',serif; font-size:2rem; font-weight:400; line-height:1.2; margin-bottom:20px; }
+  .ob-intro-title em { font-style:italic; color:var(--pink-dk); }
+  .ob-intro-body { font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink-light); line-height:1.8; flex:1; }
+  .ob-intro-body p { margin-bottom:14px; }
+  .ob-intro-body p:last-child { margin-bottom:0; }
+  .ob-intro-body strong { font-weight:600; color:var(--ink); font-style:italic; }  .ob-pip { height:5px; flex:1; border-radius:0; background:var(--border); }
   .ob-pip.done { background:var(--pink-dk); }
   .ob-pip.active { background:var(--pink); }
 
@@ -410,15 +419,15 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [name,setName]=useState('');const [age,setAge]=useState('');
   const [gender,setGender]=useState('');const [seeking,setSeeking]=useState('');const [ageMin,setAgeMin]=useState('22');const [ageMax,setAgeMax]=useState('35');
   const [bio,setBio]=useState('');const [city,setCity]=useState('');
-  const [error,setError]=useState('');const [loading,setLoading]=useState(false);const TOTAL=6;
+  const [error,setError]=useState('');const [loading,setLoading]=useState(false);const TOTAL=8;
 
   function handlePhotoChange(e){const file=e.target.files[0];if(!file)return;setPhotoFile(file);const r=new FileReader();r.onload=ev=>setPhotoPreview(ev.target.result);r.readAsDataURL(file);}
 
   function canAdvance(){
-    if(step===0)return true;if(step===1)return email.includes('@')&&password.length>=8;
-    if(step===2)return name.trim().length>=2&&parseInt(age)>=18&&parseInt(age)<=99;
-    if(step===3)return!!gender&&!!seeking&&parseInt(ageMin)>=18&&parseInt(ageMax)<=99&&parseInt(ageMin)<=parseInt(ageMax);
-    if(step===4)return bio.trim().length>=20;if(step===5)return!!city;return true;
+    if(step===2)return true;if(step===3)return email.includes('@')&&password.length>=8;
+    if(step===4)return name.trim().length>=2&&parseInt(age)>=18&&parseInt(age)<=99;
+    if(step===5)return!!gender&&!!seeking&&parseInt(ageMin)>=18&&parseInt(ageMax)<=99&&parseInt(ageMin)<=parseInt(ageMax);
+    if(step===6)return bio.trim().length>=20;if(step===7)return!!city;return true;
   }
 
   async function finish(){
@@ -431,20 +440,46 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
     }catch(err){setError(err.message);setLoading(false);}
   }
 
-  const pips=Array.from({length:TOTAL},(_,i)=><div key={i} className={`ob-pip ${i<step?'done':i===step?'active':''}`} />);
+  const formStep=Math.max(0,step-2);
+  const pips=Array.from({length:6},(_,i)=><div key={i} className={`ob-pip ${i<formStep?'done':i===formStep?'active':''}`} />);
 
   return (
     <div className="app">
       <div className="onboarding">
         <div className="ob-logo-wrap"><div className="ob-logo">be my jam</div><span className="ob-logo-sub">★ daily matchmaking ★</span></div>
-        <div className="ob-progress">{pips}</div>
-        {step===0&&<div className="ob-step" key="s0"><div className="ob-step-num">step 1 of {TOTAL}</div><div className="ob-step-title">Your <em>face</em> tells a story</div><div className="ob-step-sub">Upload a photo that feels like you.</div><AvatarUpload photo={photoPreview} onChange={handlePhotoChange} /><div className="ob-nav"><button className="ob-btn-primary" onClick={()=>setStep(1)}>{photoPreview?'looks great →':'skip for now →'}</button></div><div className="login-toggle">already have an account? <button onClick={onSwitchToLogin}>sign in</button></div></div>}
-        {step===1&&<div className="ob-step" key="s1"><div className="ob-step-num">step 2 of {TOTAL}</div><div className="ob-step-title">Create your <em>account</em></div><div className="ob-step-sub">Your email is private and never shown to others.</div>{error&&<div className="error-msg">{error}</div>}<label className="ob-label">Email</label><input className="ob-input" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} /><label className="ob-label">Password (min 8 chars)</label><input className="ob-input" type="password" placeholder="password" value={password} onChange={e=>setPassword(e.target.value)} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(0)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(2)}>continue →</button></div></div>}
-        {step===2&&<div className="ob-step" key="s2"><div className="ob-step-num">step 3 of {TOTAL}</div><div className="ob-step-title">Nice to <em>meet</em> you</div><div className="ob-step-sub">What should people call you?</div><label className="ob-label">First name</label><input className="ob-input" placeholder="e.g. Margot" value={name} onChange={e=>setName(e.target.value)} maxLength={30} /><label className="ob-label">Age</label><input className="ob-input" type="number" placeholder="e.g. 28" value={age} onChange={e=>setAge(e.target.value)} min={18} max={99} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(1)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(3)}>continue →</button></div></div>}
-        {step===3&&<div className="ob-step" key="s3"><div className="ob-step-num">step 4 of {TOTAL}</div><div className="ob-step-title">Who are you <em>seeking?</em></div><div className="ob-step-sub">This shapes the profiles you'll see each day.</div><GenderPicker label="I am a" value={gender} onChange={setGender} /><GenderPicker label="Looking for" value={seeking} onChange={setSeeking} /><label className="ob-label">Age range I'm open to</label><div className="range-row"><input className="ob-input" type="number" placeholder="Min" value={ageMin} onChange={e=>setAgeMin(e.target.value)} min={18} max={99} /><span className="range-sep">to</span><input className="ob-input" type="number" placeholder="Max" value={ageMax} onChange={e=>setAgeMax(e.target.value)} min={18} max={99} /></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(2)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(4)}>continue →</button></div></div>}
-        {step===4&&<div className="ob-step" key="s4"><div className="ob-step-num">step 5 of {TOTAL}</div><div className="ob-step-title">Your <em>story</em> in a paragraph</div><div className="ob-step-sub">Not a dating resume. More like the opening of a good short story.</div><label className="ob-label">About you</label><textarea className="ob-textarea" rows={5} placeholder="e.g. I make ceramics by hand..." value={bio} onChange={e=>setBio(e.target.value)} maxLength={280} /><div className="char-count">{bio.length}/280</div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(3)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(5)}>continue →</button></div></div>}
-        {step===5&&<div className="ob-step" key="s5"><div className="ob-step-num">step 6 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(4)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(6)}>review →</button></div></div>}
-        {step===6&&<div className="ob-step" key="s6"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':'women'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(5)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
+        {step>=2&&<div className="ob-progress">{pips}</div>}
+        {step===0&&<div className="ob-intro" key="intro0">
+          <img className="ob-intro-logo" src="/icon-512.png" alt="be my jam" />
+          <div className="ob-intro-heading">the jam problem</div>
+          <div className="ob-intro-title">more options,<br/><em>worse decisions</em></div>
+          <div className="ob-intro-body">
+            <p>In 2000, a few researchers set up two jam-tasting tables at a grocery store. One had 24 flavors. The other had 6. The big table drew more foot traffic—who wouldn't want more options?—but the small table had happier customers.</p>
+            <p>Faced with so many options, shoppers at the big table often left without choosing anything. And when they did choose, they weren't satisfied, because they kept wondering whether the jam they chose was the best of those 24.</p>
+            <p>In other words, the small-table people were more likely to go home with a jam they liked, and more satisfied with the jams they chose.</p>
+            <p><strong>be my jam is the small table.</strong></p>
+          </div>
+          <div className="ob-nav" style={{marginTop:28}}><button className="ob-btn-primary" onClick={()=>setStep(1)}>next →</button></div>
+          <div className="login-toggle">already have an account? <button onClick={onSwitchToLogin}>sign in</button></div>
+        </div>}
+        {step===1&&<div className="ob-intro" key="intro1">
+          <img className="ob-intro-logo" src="/icon-512.png" alt="be my jam" />
+          <div className="ob-intro-heading">how it works</div>
+          <div className="ob-intro-title">four people,<br/><em>one choice.</em> every day.</div>
+          <div className="ob-intro-body">
+            <p>Every day, you'll see four profiles. You pick one—just one—and they'll be notified that you chose them. If they choose you back, you match.</p>
+            <p>You'll have just 20 messages to figure out if you want to meet. That's it. We believe that real chemistry happens in person.</p>
+            <p><strong>Intentionality with a touch of fate. Welcome to be my jam.</strong></p>
+          </div>
+          <div className="ob-nav" style={{marginTop:28}}><button className="ob-btn-back" onClick={()=>setStep(0)}>←</button><button className="ob-btn-primary" onClick={()=>setStep(2)}>let's go →</button></div>
+          <div className="login-toggle">already have an account? <button onClick={onSwitchToLogin}>sign in</button></div>
+        </div>}
+        {step===2&&<div className="ob-step" key="s2"><div className="ob-step-num">step 1 of {TOTAL}</div><div className="ob-step-title">Your <em>face</em> tells a story</div><div className="ob-step-sub">Upload a photo that feels like you.</div><AvatarUpload photo={photoPreview} onChange={handlePhotoChange} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(1)}>←</button><button className="ob-btn-primary" onClick={()=>setStep(3)}>{photoPreview?'looks great →':'skip for now →'}</button></div></div>}
+        {step===3&&<div className="ob-step" key="s3"><div className="ob-step-num">step 2 of {TOTAL}</div><div className="ob-step-title">Create your <em>account</em></div><div className="ob-step-sub">Your email is private and never shown to others.</div>{error&&<div className="error-msg">{error}</div>}<label className="ob-label">Email</label><input className="ob-input" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} /><label className="ob-label">Password (min 8 chars)</label><input className="ob-input" type="password" placeholder="password" value={password} onChange={e=>setPassword(e.target.value)} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(2)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(4)}>continue →</button></div></div>}
+        {step===4&&<div className="ob-step" key="s4"><div className="ob-step-num">step 3 of {TOTAL}</div><div className="ob-step-title">Nice to <em>meet</em> you</div><div className="ob-step-sub">What should people call you?</div><label className="ob-label">First name</label><input className="ob-input" placeholder="e.g. Margot" value={name} onChange={e=>setName(e.target.value)} maxLength={30} /><label className="ob-label">Age</label><input className="ob-input" type="number" placeholder="e.g. 28" value={age} onChange={e=>setAge(e.target.value)} min={18} max={99} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(3)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(5)}>continue →</button></div></div>}
+        {step===5&&<div className="ob-step" key="s5"><div className="ob-step-num">step 4 of {TOTAL}</div><div className="ob-step-title">Who are you <em>seeking?</em></div><div className="ob-step-sub">This shapes the profiles you'll see each day.</div><GenderPicker label="I am a" value={gender} onChange={setGender} /><GenderPicker label="Looking for" value={seeking} onChange={setSeeking} /><label className="ob-label">Age range I'm open to</label><div className="range-row"><input className="ob-input" type="number" placeholder="Min" value={ageMin} onChange={e=>setAgeMin(e.target.value)} min={18} max={99} /><span className="range-sep">to</span><input className="ob-input" type="number" placeholder="Max" value={ageMax} onChange={e=>setAgeMax(e.target.value)} min={18} max={99} /></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(4)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(6)}>continue →</button></div></div>}
+        {step===6&&<div className="ob-step" key="s6"><div className="ob-step-num">step 5 of {TOTAL}</div><div className="ob-step-title">Your <em>story</em> in a paragraph</div><div className="ob-step-sub">Not a dating resume. More like the opening of a good short story.</div><label className="ob-label">About you</label><textarea className="ob-textarea" rows={5} placeholder="e.g. I make ceramics by hand..." value={bio} onChange={e=>setBio(e.target.value)} maxLength={280} /><div className="char-count">{bio.length}/280</div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(5)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(7)}>continue →</button></div></div>}
+        {step===7&&<div className="ob-step" key="s7"><div className="ob-step-num">step 6 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(6)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(8)}>review →</button></div></div>}
+        {step===8&&<div className="ob-step" key="s8"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':'women'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(7)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
       </div>
     </div>
   );
