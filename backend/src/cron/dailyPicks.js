@@ -6,7 +6,7 @@ const { sendPushToUser } = require('../services/push');
 function startCron() {
   // Run every day at 2:00 PM server time
   // Make sure your server/hosting is in the right timezone, or use UTC and adjust
-  cron.schedule('0 14 * * *', async () => {
+  cron.schedule('0 19 * * *', async () => {
     console.log('🕑 [CRON] Running daily picks assignment at', new Date().toISOString());
     await runDailyPicks();
   });
