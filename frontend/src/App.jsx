@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import {
   apiRegister, apiLogin, apiGetMe, apiUpdateMe, apiUploadPhoto,
   apiGetDiscover, apiChoose, apiGetNotifications, apiRespond, apiGetMatches,
-  apiGetMessages, apiSendMessage, apiDateResponse,
+  apiGetMessages, apiSendMessage, apiDateResponse, apiUnmatch,
 } from "./api.js";
 import { requestPushPermission } from "./push.js";
 
@@ -300,6 +300,8 @@ const STYLE = `
   .open-chat-btn { width:100%; margin-top:10px; padding:9px; background:var(--page); color:var(--ink); border:2px solid var(--border-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.65rem; cursor:pointer; transition:background .12s; }
   .open-chat-btn:hover { background:var(--border); }
   .open-chat-btn.has-unread { border-color:var(--pink-dk); color:var(--pink-dk); background:#fdf6fa; }
+  .unmatch-btn { width:100%; margin-top:6px; padding:9px; background:transparent; color:var(--ink-faint); border:2px solid var(--border); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.61rem; cursor:pointer; transition:color .12s,border-color .12s; }
+  .unmatch-btn:hover { color:#c03030; border-color:#e0b0b0; background:#fdf0f0; }
 `;
 
 const CITIES = [
@@ -751,6 +753,10 @@ function MainApp({ user: initialUser, setUser }) {
     } catch (err) { alert(err.message); }
   }
   async function handlePass(id){await apiRespond(id,false);setNotifications(prev=>prev.map(n=>n.from.id===id?{...n,pending:false,passed:true}:n));}
+  async function handleUnmatch(matchId) {
+    if (!window.confirm('Are you sure you want to unmatch?')) return;
+    try { await apiUnmatch(matchId); setMatches(prev=>prev.filter(m=>m.id!==matchId)); } catch(err){alert(err.message);}
+  }
 
   const visibleNotifications=notifications.filter(n=>!n.matched);
   const pendingCount=visibleNotifications.filter(n=>n.pending).length;
@@ -819,6 +825,7 @@ function MainApp({ user: initialUser, setUser }) {
                   <button className={`open-chat-btn ${m.unreadCount>0?'has-unread':''}`} onClick={()=>setOpenChat(m)}>
                     {m.unreadCount>0?`💬 ${m.unreadCount} new message${m.unreadCount===1?'':'s'}`:'💬 open chat'}
                   </button>
+                  <button className="unmatch-btn" onClick={()=>handleUnmatch(m.id)}>unmatch</button>
                 </div>
               ))}
             </div>

@@ -250,6 +250,23 @@ router.get('/matches', requireAuth, async (req, res) => {
   }
 });
 
+// —— Unmatching ———————————————————————————————————————————————
+router.delete('/matches/:matchId', requireAuth, async (req, res) => {
+  const userId = req.userId;
+  const matchId = parseInt(req.params.matchId, 10);
+  try {
+    const result = await pool.query(
+      'DELETE FROM matches WHERE id = $1 AND (user_a_id = $2 OR user_b_id = $2)',
+      [matchId, userId]
+    );
+    if (result.rowCount === 0) return res.status(404).json({ error: 'Match not found' });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Unmatch error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // ── Helpers ──────────────────────────────────────────────────
 
 async function assignDailyPicks(userId, date) {

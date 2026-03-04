@@ -93,3 +93,7 @@ export async function apiDateResponse(matchId, yes) {
   return request(`/api/chat/${matchId}/date-response`, { method: 'POST', body: JSON.stringify({ yes }) });
 }
 
+// —— Unmatch ———————————————————————————————————————————————————
+export async function apiUnmatch(matchId) {
+  return request(`/api/discover/matches/${matchId}`, { method: 'DELETE' });
+}
