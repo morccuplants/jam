@@ -7,7 +7,7 @@ const router = express.Router();
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { email, password, name, age, gender, seeking, ageMin, ageMax, bio, city, contactType, contactIcon, contactValue } = req.body;
+  const { email, password, name, age, gender, seeking, ageMin, ageMax, bio, city } = req.body;
 
   if (!email || !password || !name || !age || !gender || !seeking || !city || !contactValue) {
     return res.status(400).json({ error: 'Missing required fields' });
