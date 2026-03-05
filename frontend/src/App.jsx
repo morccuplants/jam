@@ -315,14 +315,6 @@ const CITIES = [
   { name:"Other",       vibe:"Somewhere wonderful" },
 ];
 
-const CONTACT_TYPES = [
-  { type:"Instagram", icon:"📸" },
-  { type:"Email",     icon:"✉️" },
-  { type:"Discord",   icon:"🎮" },
-  { type:"WhatsApp",  icon:"💬" },
-  { type:"Telegram",  icon:"✈️" },
-  { type:"Phone",     icon:"📱" },
-];
 
 function getTimeUntilNext2PM() {
   const now = new Date(), next = new Date();
@@ -557,7 +549,7 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
   }, [match.id]);
 
   useEffect(() => { loadMessages(); }, [loadMessages]);
-  useEffect(() => { const t = setInterval(loadMessages, 5000); return () => clearInterval(t); }, [loadMessages]);
+  useEffect(() => { const t = setInterval(loadMessages, 17000); return () => clearInterval(t); }, [loadMessages]);
   useEffect(() => {
     const el = messagesRef.current;
     if (!el) return;
@@ -733,6 +725,7 @@ function MainApp({ user: initialUser, setUser }) {
   const [profiles,setProfiles]=useState([]);const [chosenId,setChosenId]=useState(null);const [selected,setSelected]=useState(null);
   const [notifications,setNotifications]=useState([]);const [matches,setMatches]=useState([]);const [editOpen,setEditOpen]=useState(false);const [openChat,setOpenChat]=useState(null);
   const [loadingDiscover,setLoadingDiscover]=useState(true);const [choosing,setChoosing]=useState(false);
+  const [chattedMatchIds,setChattedMatchIds]=useState(()=>new Set());
 
   function updateUser(u){setLocalUser(u);setUser(u);}
 
@@ -741,7 +734,7 @@ function MainApp({ user: initialUser, setUser }) {
   const loadMatches=useCallback(async()=>{try{setMatches(await apiGetMatches());}catch{}}, []);
 
   useEffect(()=>{loadDiscover();loadNotifications();loadMatches();setTimeout(()=>requestPushPermission(),3000);},[]);
-  useEffect(()=>{const t=setInterval(loadNotifications,30000);return()=>clearInterval(t);},[]);
+  useEffect(()=>{const t=setInterval(()=>{loadNotifications();loadMatches();},30000);return()=>clearInterval(t);},[]);
   useEffect(()=>{const t=setInterval(()=>setCountdown(getTimeUntilNext2PM()),1000);return()=>clearInterval(t);},[]);
 
   async function handleChoose(){if(!selected||choosing)return;setChoosing(true);try{const{matched}=await apiChoose(selected.id);setChosenId(selected.id);if(matched)await loadMatches();}catch(err){alert(err.message);}finally{setChoosing(false);}}
@@ -758,7 +751,7 @@ function MainApp({ user: initialUser, setUser }) {
     try { await apiUnmatch(matchId); setMatches(prev=>prev.filter(m=>m.id!==matchId)); } catch(err){alert(err.message);}
   }
 
-  const visibleNotifications=notifications.filter(n=>!n.matched);
+  const visibleNotifications=notifications.filter(n=>!n.matched&&!n.passed);
   const pendingCount=visibleNotifications.filter(n=>n.pending).length;
   const chosenProfile=profiles.find(p=>p.id===chosenId);
 
@@ -793,7 +786,7 @@ function MainApp({ user: initialUser, setUser }) {
           {tab==='notifications'&&(
             <div className="fade-in">
               <div className="section-title">You Were Chosen</div>
-              <div className="section-sub">Match to reveal their contact.</div>
+              <div className="section-sub">These people chose you. Set up a date.</div>
               <div className="notif-list">
                 {visibleNotifications.length===0&&<div className="empty-state"><div className="icon">💌</div><p>No one has chosen you yet.</p></div>}
                 {visibleNotifications.map(n=>(
@@ -816,13 +809,13 @@ function MainApp({ user: initialUser, setUser }) {
               {matches.length===0&&<div className="empty-state"><div className="icon">🕯️</div><p>No matches yet.</p></div>}
               {matches.map(m=>(
                 <div key={m.id} className="match-card fade-in">
-                  <div className="matched-banner"><div className="heart">🍓</div><h3>You matched with {m.partner.name}</h3><p>you both chose each other — say hello!</p></div>
+                  {!chattedMatchIds.has(m.id)&&m.unreadCount===0&&<div className="matched-banner"><div className="heart">🍓</div><h3>You matched with {m.partner.name}</h3><p>you both chose each other — say hello!</p></div>}
                   <div className="match-header">
                     <div className="match-avatar">{m.partner.photoUrl?<img src={photoUrl(m.partner.photoUrl)} alt={m.partner.name} />:'🌟'}</div>
                     <div className="match-info"><h3>{m.partner.name}</h3><p>{m.partner.age} · {m.partner.city}</p><p style={{marginTop:4,fontSize:'.88rem',color:'var(--ink-light)',fontFamily:"'EB Garamond',serif",fontStyle:'italic',lineHeight:1.6}}>{m.partner.bio}</p></div>
                   </div>
                   <div className="match-label">set up a date :)</div>
-                  <button className={`open-chat-btn ${m.unreadCount>0?'has-unread':''}`} onClick={()=>setOpenChat(m)}>
+                  <button className={`open-chat-btn ${m.unreadCount>0?'has-unread':''}`} onClick={()=>{setOpenChat(m);setChattedMatchIds(prev=>new Set([...prev,m.id]));}}>  
                     {m.unreadCount>0?`💬 ${m.unreadCount} new message${m.unreadCount===1?'':'s'}`:'💬 open chat'}
                   </button>
                   <button className="unmatch-btn" onClick={()=>handleUnmatch(m.id)}>unmatch</button>
