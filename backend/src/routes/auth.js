@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
   const { email, password, name, age, gender, seeking, ageMin, ageMax, bio, city } = req.body;
 
-  if (!email || !password || !name || !age || !gender || !seeking || !city || !contactValue) {
+  if (!email || !password || !name || !age || !gender || !seeking || !city ) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
   if (password.length < 8) {
@@ -24,10 +24,10 @@ router.post('/register', async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 12);
     const result = await pool.query(
-      `INSERT INTO users (email, password, name, age, gender, seeking, age_min, age_max, bio, city, contact_type, contact_icon, contact_value)
+      `INSERT INTO users (email, password, name, age, gender, seeking, age_min, age_max, bio, city)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-       RETURNING id, email, name, age, gender, seeking, age_min, age_max, bio, city, photo_url, contact_type, contact_icon, contact_value`,
-      [email.toLowerCase(), hashed, name, age, gender, seeking, ageMin || 18, ageMax || 99, bio || '', city, contactType, contactIcon, contactValue]
+       RETURNING id, email, name, age, gender, seeking, age_min, age_max, bio, city, photo_url`,
+      [email.toLowerCase(), hashed, name, age, gender, seeking, ageMin || 18, ageMax || 99, bio || '', city]
     );
 
     const user = result.rows[0];
@@ -66,7 +66,6 @@ function sanitizeUser(u) {
     id: u.id, email: u.email, name: u.name, age: u.age,
     gender: u.gender, seeking: u.seeking, ageMin: u.age_min, ageMax: u.age_max,
     bio: u.bio, city: u.city, photoUrl: u.photo_url,
-    contact: { type: u.contact_type, icon: u.contact_icon, value: u.contact_value }
   };
 }
 
