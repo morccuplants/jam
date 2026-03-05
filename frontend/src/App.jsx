@@ -421,7 +421,7 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [name,setName]=useState('');const [age,setAge]=useState('');
   const [gender,setGender]=useState('');const [seeking,setSeeking]=useState('');const [ageMin,setAgeMin]=useState('22');const [ageMax,setAgeMax]=useState('35');
   const [bio,setBio]=useState('');const [city,setCity]=useState('');
-  const [error,setError]=useState('');const [loading,setLoading]=useState(false);const TOTAL=8;
+  const [error,setError]=useState('');const [loading,setLoading]=useState(false);const TOTAL=6;
 
   function handlePhotoChange(e){const file=e.target.files[0];if(!file)return;setPhotoFile(file);const r=new FileReader();r.onload=ev=>setPhotoPreview(ev.target.result);r.readAsDataURL(file);}
 
