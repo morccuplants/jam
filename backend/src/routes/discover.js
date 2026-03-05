@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', requireAuth, async (req, res) => {
   try {
     const userId = req.userId;
-    const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toLocaleString('en-CA', { timeZone: 'America/New_York' }).slice(0, 10);
 
     // Check if picks already exist for today
     const existing = await pool.query(
@@ -48,7 +48,7 @@ router.post('/choose', requireAuth, async (req, res) => {
   if (!profileId) return res.status(400).json({ error: 'profileId required' });
 
   const userId = req.userId;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toLocaleString('en-CA', { timeZone: 'America/New_York' }).slice(0, 10);
 
   try {
     // Verify profileId was in today's picks
@@ -125,7 +125,7 @@ router.post('/choose', requireAuth, async (req, res) => {
 // GET /api/discover/notifications — people who chose you, pending your response
 router.get('/notifications', requireAuth, async (req, res) => {
   const userId = req.userId;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toLocaleString('en-CA', { timeZone: 'America/New_York' }).slice(0, 10);
 
   try {
     // People who chose this user today or recently, and this user hasn't responded yet
@@ -182,7 +182,7 @@ if (!choiceResult.rows.length) {
   return res.status(400).json({ error: 'No choice found from that user' });
 }
 
-const today = new Date().toISOString().slice(0, 10);
+const today = new Date().toLocaleString('en-CA', { timeZone: 'America/New_York' }).slice(0, 10);
 
 // Insert our reciprocal choice
 await pool.query(
