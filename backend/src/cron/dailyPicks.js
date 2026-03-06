@@ -6,9 +6,11 @@ const { sendPushToUser } = require('../services/push');
 function startCron() {
   // Run every day at 2:00 PM server time
   // Make sure your server/hosting is in the right timezone, or use UTC and adjust
-  cron.schedule('0 19 * * *', async () => {
+  cron.schedule('0 14 * * *', async () => {
     console.log('🕑 [CRON] Running daily picks assignment at', new Date().toISOString());
     await runDailyPicks();
+  }, {
+    timezone: 'America/New_York'
   });
 
   console.log('⏰ Daily picks cron scheduled for 2:00 PM');
@@ -39,7 +41,7 @@ async function runDailyPicks() {
             // Send push notification
             await sendPushToUser(user.id, {
               title: 'Your daily four are here ✨',
-              body: `${picks.length} new profiles are waiting for you in twilight.`,
+              body: `${picks.length} new profiles are waiting for you. choose your jam. 🍓`,
               url: '/',
             });
             successCount++;

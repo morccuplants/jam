@@ -288,6 +288,7 @@ async function assignDailyPicks(userId, date) {
        AND age >= $3
        AND age <= $4
        AND city = $5
+       AND id NOT IN (SELECT chosen_id FROM choices WHERE chooser_id = $1)
      ORDER BY RANDOM()
      LIMIT 4`,
     [userId, user.seeking, user.age_min, user.age_max, user.city]

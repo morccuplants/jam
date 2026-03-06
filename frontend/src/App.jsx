@@ -306,13 +306,7 @@ const STYLE = `
 
 const CITIES = [
   { name:"New York",    vibe:"The city that never sleeps" },
-  { name:"Los Angeles", vibe:"Sun, smog & soul" },
-  { name:"Chicago",     vibe:"Windy city warmth" },
-  { name:"London",      vibe:"Fog & wonder" },
-  { name:"Paris",       vibe:"Romance in every alley" },
-  { name:"Tokyo",       vibe:"Neon & quiet beauty" },
-  { name:"Berlin",      vibe:"Art, bass & history" },
-  { name:"Other",       vibe:"Somewhere wonderful" },
+  { name:"New York",    vibe:"The city that never sleeps" },
 ];
 
 
