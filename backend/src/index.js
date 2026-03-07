@@ -17,12 +17,9 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
-      'http://localhost:5173',
-      'https://jam-morccuplants-projects.vercel.app',
-      'https://jamichoose.vercel.app',
-      'https://jam-pearl-rho.vercel.app',
       'https://bemyjam.co',
       'https://www.bemyjam.co',
+      'https://app.bemyjam.co',
     ];
     if (!origin || allowed.includes(origin)) callback(null, true);
     else callback(new Error('Not allowed by CORS'));
