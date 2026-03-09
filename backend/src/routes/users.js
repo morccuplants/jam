@@ -1,21 +1,26 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 const pool = require('../db/pool');
 const requireAuth = require('../middleware/auth');
 
 const router = express.Router();
 
-// Store uploads in /uploads directory (in production, swap for S3/Cloudinary)
-const uploadDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-const storage = multer.diskStorage({
-  destination: uploadDir,
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `user_${req.userId}_${Date.now()}${ext}`);
+// Store uploads directly in Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'bemyjam',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 600, height: 600, crop: 'fill', gravity: 'face' }],
   },
 });
 
@@ -72,8 +77,8 @@ router.patch('/me', requireAuth, async (req, res) => {
 router.post('/me/photo', requireAuth, upload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-  // In production replace this URL with your CDN/S3 URL
-  const photoUrl = `/uploads/${req.file.filename}`;
+  // Cloudinary returns the hosted URL in req.file.path
+  const photoUrl = req.file.path;
 
   try {
     await pool.query('UPDATE users SET photo_url = $1, updated_at = NOW() WHERE id = $2', [photoUrl, req.userId]);
@@ -82,9 +87,6 @@ router.post('/me/photo', requireAuth, upload.single('photo'), async (req, res) =
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-// Serve uploaded files
-router.use('/uploads', express.static(uploadDir));
 
 function sanitizeUser(u) {
   return {
