@@ -272,7 +272,7 @@ router.delete('/matches/:matchId', requireAuth, async (req, res) => {
 async function assignDailyPicks(userId, date) {
   // Get user preferences
   const userResult = await pool.query(
-    'SELECT seeking, age_min, age_max, city FROM users WHERE id = $1',
+    'SELECT gender, seeking, age_min, age_max, city FROM users WHERE id = $1',
     [userId]
   );
   const user = userResult.rows[0];
@@ -284,14 +284,18 @@ async function assignDailyPicks(userId, date) {
     `SELECT id, name, age, gender, city, bio, photo_url
      FROM users
      WHERE id != $1
-       AND gender = $2
        AND age >= $3
        AND age <= $4
        AND city = $5
        AND id NOT IN (SELECT chosen_id FROM choices WHERE chooser_id = $1)
+       AND (
+         ($2 = 'any' AND (seeking = $6 OR seeking = 'any'))
+         OR
+         ($2 != 'any' AND gender = $2 AND (seeking = $6 OR seeking = 'any'))
+       )
      ORDER BY RANDOM()
      LIMIT 4`,
-    [userId, user.seeking, user.age_min, user.age_max, user.city]
+    [userId, user.seeking, user.age_min, user.age_max, user.city, user.gender]
   );
 
   const picks = eligible.rows;
