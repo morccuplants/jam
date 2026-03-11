@@ -46,7 +46,7 @@ router.get('/me', requireAuth, async (req, res) => {
 
 // PATCH /api/users/me
 router.patch('/me', requireAuth, async (req, res) => {
-  const { name, age, gender, seeking, ageMin, ageMax, bio, city, contactType, contactIcon, contactValue } = req.body;
+  const { name, age, gender, seeking, ageMin, ageMax, bio, city } = req.body;
   try {
     const result = await pool.query(
       `UPDATE users SET
@@ -58,13 +58,10 @@ router.patch('/me', requireAuth, async (req, res) => {
         age_max = COALESCE($6, age_max),
         bio = COALESCE($7, bio),
         city = COALESCE($8, city),
-        contact_type = COALESCE($9, contact_type),
-        contact_icon = COALESCE($10, contact_icon),
-        contact_value = COALESCE($11, contact_value),
         updated_at = NOW()
-       WHERE id = $12
+       WHERE id = $9
        RETURNING *`,
-      [name, age, gender, seeking, ageMin, ageMax, bio, city, contactType, contactIcon, contactValue, req.userId]
+      [name, age, gender, seeking, ageMin, ageMax, bio, city, req.userId]
     );
     res.json(sanitizeUser(result.rows[0]));
   } catch (err) {
