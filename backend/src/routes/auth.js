@@ -7,13 +7,27 @@ const router = express.Router();
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { email, password, name, age, gender, seeking, ageMin, ageMax, bio, city } = req.body;
+  const { email, password, name, age, gender, seeking, ageMin, ageMax, bio, city, inviteCode } = req.body;
 
   if (!email || !password || !name || !age || !gender || !seeking || !city ) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
   if (password.length < 8) {
     return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  }
+
+  // Beta gate — only enforced when BETA_MODE=true
+  if (process.env.BETA_MODE === 'true') {
+    if (!inviteCode) {
+      return res.status(403).json({ error: 'An invite code is required during beta.' });
+    }
+    const codeCheck = await pool.query(
+      'SELECT id FROM beta_codes WHERE code = $1 AND used_by_user_id IS NULL',
+      [inviteCode.trim().toUpperCase()]
+    );
+    if (!codeCheck.rows.length) {
+      return res.status(403).json({ error: 'Invalid or already used invite code.' });
+    }
   }
 
   try {
@@ -31,6 +45,15 @@ router.post('/register', async (req, res) => {
     );
 
     const user = result.rows[0];
+
+    // Mark invite code as used
+    if (process.env.BETA_MODE === 'true' && inviteCode) {
+      await pool.query(
+        'UPDATE beta_codes SET used_by_user_id = $1, used_at = NOW() WHERE code = $2',
+        [user.id, inviteCode.trim().toUpperCase()]
+      );
+    }
+
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     res.status(201).json({ token, user: sanitizeUser(user) });
