@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
     }
     const codeCheck = await pool.query(
       'SELECT id FROM beta_codes WHERE code = $1 AND used_by_user_id IS NULL',
-      [inviteCode.trim().toUpperCase()]
+      [inviteCode.trim()]
     );
     if (!codeCheck.rows.length) {
       return res.status(403).json({ error: 'Invalid or already used invite code.' });
@@ -50,7 +50,7 @@ router.post('/register', async (req, res) => {
     if (process.env.BETA_MODE === 'true' && inviteCode) {
       await pool.query(
         'UPDATE beta_codes SET used_by_user_id = $1, used_at = NOW() WHERE code = $2',
-        [user.id, inviteCode.trim().toUpperCase()]
+        [user.id, inviteCode.trim()]
       );
     }
 
