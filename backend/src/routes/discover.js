@@ -141,6 +141,7 @@ router.get('/notifications', requireAuth, async (req, res) => {
        FROM choices c
        JOIN users u ON u.id = c.chooser_id
        WHERE c.chosen_id = $1
+         AND NOT EXISTS (SELECT 1 FROM passes WHERE user_id = $1 AND passed_user_id = c.chooser_id)
        ORDER BY c.created_at DESC
        LIMIT 30`,
       [userId]
@@ -170,7 +171,11 @@ router.post('/respond', requireAuth, async (req, res) => {
 
   try {
     if (!accept) {
-      // Just mark as seen/passed — nothing to store, frontend handles it
+      // Store the pass so notifications endpoint can filter it out
+      await pool.query(
+        'INSERT INTO passes (user_id, passed_user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+        [userId, chooserId]
+      );
       return res.json({ success: true, matched: false });
     }
 
