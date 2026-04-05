@@ -3,7 +3,6 @@ import {
   apiRegister, apiLogin, apiGetMe, apiUpdateMe, apiUploadPhoto,
   apiGetDiscover, apiChoose, apiGetNotifications, apiRespond, apiGetMatches,
   apiGetMessages, apiSendMessage, apiDateResponse, apiUnmatch,
-  apiGetPreviewUsers,
 } from "./api.js";
 import { requestPushPermission } from "./push.js";
 
@@ -226,27 +225,6 @@ const STYLE = `
   .panel-save-btn:hover { background:var(--pink-dk); color:var(--white); }
 
   .error-msg { background:#fdf0f0; border:2px solid #e0b0b0; border-radius:var(--r); padding:9px 13px; font-family:'Pixelify Sans',monospace; font-size:.71rem; color:#c03030; margin-bottom:14px; }
-
-  /* ── Pre-launch holding screen ── */
-  .holding-screen { flex:1; display:flex; flex-direction:column; background:var(--cream); overflow-y:auto; }
-  .holding-hero { padding:36px 24px 24px; text-align:center; }
-  .holding-jar { font-size:3rem; display:block; margin-bottom:16px; animation:float 4s ease-in-out infinite; }
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-  .holding-title { font-family:'EB Garamond',serif; font-size:2.2rem; font-weight:400; font-style:italic; line-height:1.15; margin-bottom:8px; color:var(--ink); }
-  .holding-title em { color:var(--pink-dk); font-style:italic; }
-  .holding-sub { font-size:.9rem; color:var(--ink-light); font-style:italic; line-height:1.65; margin-bottom:28px; }
-  .holding-countdown { background:var(--white); border:2px solid var(--border-dk); border-top:4px solid var(--pink); padding:18px 20px; margin:0 24px 28px; text-align:center; }
-  .holding-countdown-label { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--ink-faint); letter-spacing:.12em; margin-bottom:6px; }
-  .holding-countdown-time { font-family:'EB Garamond',serif; font-size:2rem; font-weight:400; color:var(--ink); letter-spacing:.04em; }
-  .holding-countdown-date { font-family:'Pixelify Sans',monospace; font-size:.6rem; color:var(--pink-dk); margin-top:4px; letter-spacing:.08em; }
-  .holding-section-label { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--ink-faint); letter-spacing:.12em; text-align:center; margin-bottom:14px; }
-  .holding-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:0 24px 16px; }
-  .holding-profile { display:flex; flex-direction:column; align-items:center; gap:6px; }
-  .holding-avatar { width:72px; height:72px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); background:var(--page); display:flex; align-items:center; justify-content:center; font-size:1.6rem; }
-  .holding-avatar img { width:100%; height:100%; object-fit:cover; }
-  .holding-avatar-name { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--ink-light); letter-spacing:.04em; text-align:center; }
-  .holding-footer { padding:20px 24px 36px; text-align:center; }
-  .holding-footer p { font-size:.88rem; color:var(--ink-faint); font-style:italic; line-height:1.6; }
 
   .loading-screen { display:flex; align-items:center; justify-content:center; height:100vh; flex-direction:column; gap:14px; background:var(--page); }
   .loading-cursor { font-family:'Pixelify Sans',monospace; font-size:1.1rem; color:var(--pink-dk); animation:blink 1s step-end infinite; }
@@ -749,70 +727,6 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
   );
 }
 
-function HoldingScreen({ user }) {
-  const [previews, setPreviews] = React.useState([]);
-  const [countdown, setCountdown] = React.useState('');
-  const LAUNCH = new Date(import.meta.env.VITE_LAUNCH_DATE || '2025-01-01T14:00:00-05:00');
-
-  React.useEffect(() => {
-    apiGetPreviewUsers().then(setPreviews).catch(() => {});
-  }, []);
-
-  React.useEffect(() => {
-    function tick() {
-      const now = new Date();
-      const diff = LAUNCH - now;
-      if (diff <= 0) { setCountdown('now'); return; }
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      setCountdown(d > 0 ? `${d}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m` : `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`);
-    }
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const launchLabel = LAUNCH.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', timeZone:'America/New_York' });
-
-  return (
-    <div className="app">
-      <style>{STYLE}</style>
-      <div className="holding-screen">
-        <div className="holding-hero">
-          <span className="holding-jar">🍓</span>
-          <h1 className="holding-title">you're in,<br/><em>{user.name}.</em></h1>
-          <p className="holding-sub">be my jam opens soon. four profiles, one choice, every day at 2pm. until then — take a look at who's already here.</p>
-        </div>
-        <div className="holding-countdown">
-          <div className="holding-countdown-label">✦ doors open in ✦</div>
-          <div className="holding-countdown-time">{countdown || '...'}</div>
-          <div className="holding-countdown-date">{launchLabel} · 2pm ET</div>
-        </div>
-        {previews.length > 0 && <>
-          <div className="holding-section-label">✦ {previews.length} people already waiting ✦</div>
-          <div className="holding-grid">
-            {previews.map(p => (
-              <div key={p.id} className="holding-profile">
-                <div className="holding-avatar">
-                  {p.photoUrl
-                    ? <img src={photoUrl(p.photoUrl)} alt={p.name} />
-                    : '🌟'}
-                </div>
-                <div className="holding-avatar-name">{p.name}</div>
-              </div>
-            ))}
-          </div>
-        </>}
-        <div className="holding-footer">
-          <p>sit tight. good things take a moment.<br/>you'll get an email when it's time.</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function MainApp({ user: initialUser, setUser }) {
   const [user,setLocalUser]=useState(initialUser);const [tab,setTab]=useState('discover');const [countdown,setCountdown]=useState(getTimeUntilNext2PM());
   const [profiles,setProfiles]=useState([]);const [chosenId,setChosenId]=useState(null);const [selected,setSelected]=useState(null);
@@ -927,14 +841,13 @@ export default function App() {
   useEffect(()=>{
     const token=localStorage.getItem('bmj_token');
     if(!token){setScreen('onboarding');return;}
-    apiGetMe().then(u=>{setUser(u);const launched=new Date()>=new Date(import.meta.env.VITE_LAUNCH_DATE||'2025-01-01T14:00:00-05:00');setScreen(launched?'app':'holding');}).catch(()=>{localStorage.removeItem('bmj_token');setScreen('onboarding');});
+    apiGetMe().then(u=>{setUser(u);setScreen('app');}).catch(()=>{localStorage.removeItem('bmj_token');setScreen('onboarding');});
   },[]);
   if(screen==='loading')return(<><style>{STYLE}</style><div className="loading-screen"><div style={{fontFamily:"'EB Garamond',serif",fontSize:'2.1rem',fontStyle:'italic',color:'var(--ink)'}}>be my jam</div><div className="loading-cursor">_</div></div></>);
   return(
     <><style>{STYLE}</style>
     {screen==='onboarding'&&<Onboarding onComplete={u=>{setUser(u);setScreen('app');}} onSwitchToLogin={()=>setScreen('login')} />}
     {screen==='login'&&<div className="app"><LoginScreen onLogin={u=>{setUser(u);setScreen('app');}} /><div className="login-toggle" style={{padding:'0 24px 32px',position:'relative',zIndex:1}}>new here? <button onClick={()=>setScreen('onboarding')}>create account</button></div></div>}
-    {screen==='holding'&&user&&<HoldingScreen user={user} />}
     {screen==='app'&&user&&<MainApp user={user} setUser={u=>setUser(u)} />}
     </>
   );
