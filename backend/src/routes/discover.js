@@ -332,5 +332,18 @@ function formatTime(ts) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+// ——— User previews for pre-launch ——————————————————————————————————————
+
 module.exports = router;
 module.exports.assignDailyPicks = assignDailyPicks;
+
+router.get('/preview-users', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, name, photo_url FROM users ORDER BY created_at DESC LIMIT 30'
+    );
+    res.json(result.rows.map(u => ({ id: u.id, name: u.name, photoUrl: u.photo_url })));
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});

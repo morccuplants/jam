@@ -97,3 +97,8 @@ export async function apiDateResponse(matchId, yes) {
 export async function apiUnmatch(matchId) {
   return request(`/api/discover/matches/${matchId}`, { method: 'DELETE' });
 }
+
+// —— Pre-launch user previews ———————————————————————————————————
+export async function apiGetPreviewUsers() {
+  return request('/api/discover/preview-users');
+}
