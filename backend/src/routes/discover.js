@@ -340,7 +340,7 @@ module.exports.assignDailyPicks = assignDailyPicks;
 router.get('/preview-users', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, name, photo_url FROM users ORDER BY created_at DESC LIMIT 30'
+      'SELECT id, name, photo_url FROM users ORDER BY RANDOM() DESC LIMIT 15'
     );
     res.json(result.rows.map(u => ({ id: u.id, name: u.name, photoUrl: u.photo_url })));
   } catch (err) {
