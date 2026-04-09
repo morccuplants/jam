@@ -937,7 +937,7 @@ export default function App() {
   useEffect(()=>{
     const token=localStorage.getItem('bmj_token');
     if(!token){setScreen('onboarding');return;}
-    apiGetMe().then(u=>{setUser(u);const launched=new Date()>=new Date(import.meta.env.VITE_LAUNCH_DATE||'2025-01-01T14:00:00-05:00');setScreen(launched?'app':'holding');}).catch(()=>{localStorage.removeItem('bmj_token');setScreen('onboarding');});
+    apiGetMe().then(u=>{setUser(u);const launched=new Date()>=new Date(import.meta.env.VITE_LAUNCH_DATE||'2025-05-27T14:00:00-05:00');setScreen(launched?'app':'holding');}).catch(()=>{localStorage.removeItem('bmj_token');setScreen('onboarding');});
   },[]);
   if(screen==='loading')return(<><style>{STYLE}</style><div className="loading-screen"><div style={{fontFamily:"'EB Garamond',serif",fontSize:'2.1rem',fontStyle:'italic',color:'var(--ink)'}}>be my jam</div><div className="loading-cursor">_</div></div></>);
   return(
