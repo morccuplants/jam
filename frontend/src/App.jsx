@@ -816,7 +816,7 @@ function HoldingScreen({ user }) {
           </div>
         </>}
         <div className="holding-footer">
-          <p>sit tight. good things take a moment.<br/>you'll get an email when it's time.</p>
+          <p>someone cute missing from this list?<br/>give them one of your invite codes 😏</p>
         </div>
       </div>
     </div>
