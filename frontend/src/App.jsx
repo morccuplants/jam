@@ -796,6 +796,7 @@ function HoldingScreen({ user }) {
           <span className="holding-jar">🍓</span>
           <h1 className="holding-title">you're in,<br/><em>{user.name}.</em></h1>
           <p className="holding-sub">be my jam opens soon. four profiles, one choice, every day at 2pm. until then — take a look at who's already here.</p>
+          <p className="holding-sub">someone cute missing from this list?<br/>give them one of your invite codes 😏</p>
         </div>
         <div className="holding-countdown">
           <div className="holding-countdown-label">✦ doors open in ✦</div>
@@ -815,9 +816,6 @@ function HoldingScreen({ user }) {
             ))}
           </div>
         </>}
-        <div className="holding-footer">
-          <p>someone cute missing from this list?<br/>give them one of your invite codes 😏</p>
-        </div>
       </div>
     </div>
   );
