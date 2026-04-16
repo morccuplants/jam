@@ -941,7 +941,7 @@ export default function App() {
   return(
     <><style>{STYLE}</style>
     {screen==='onboarding'&&<Onboarding onComplete={u=>{setUser(u);setScreen('holding');}} onSwitchToLogin={()=>setScreen('login')} />}
-    {screen==='login'&&<div className="app"><LoginScreen onLogin={u=>{setUser(u);setScreen('app');}} /><div className="login-toggle" style={{padding:'0 24px 32px',position:'relative',zIndex:1}}>new here? <button onClick={()=>setScreen('onboarding')}>create account</button></div></div>}
+    {screen==='login'&&<div className="app"><LoginScreen onLogin={u=>{setUser(u);setScreen('holding');}} /><div className="login-toggle" style={{padding:'0 24px 32px',position:'relative',zIndex:1}}>new here? <button onClick={()=>setScreen('onboarding')}>create account</button></div></div>}
     {screen==='holding'&&user&&<HoldingScreen user={user} />}
     {screen==='app'&&user&&<MainApp user={user} setUser={u=>setUser(u)} />}
     </>
