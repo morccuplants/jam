@@ -487,7 +487,7 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
         {step===7&&<div className="ob-step" key="s7">
   <div className="ob-step-num">step 6 of {TOTAL}</div>
   <div className="ob-step-title">In your own <em>words.</em></div>
-  <div className="ob-step-sub">Write whatever you want people to know. No format, no prompts — just you.</div>
+  <div className="ob-step-sub">Write whatever you want people to know. Make it like a personal ad.</div>
   <label className="ob-label">Bio</label>
   <textarea className="ob-textarea" rows={6} placeholder="e.g. I've lived in four cities and I still can't decide if I'm a morning person. I make good coffee and bad decisions about books — I always start three at once. Looking for someone who takes things seriously without taking themselves too seriously." value={bio} onChange={e=>setBio(e.target.value)} maxLength={400} />
   <div className="char-count">{bio.length}/400</div>
