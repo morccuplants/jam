@@ -424,7 +424,7 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   const [step,setStep]=useState(0);const [photoFile,setPhotoFile]=useState(null);const [photoPreview,setPhotoPreview]=useState(null);const [inviteCode,setInviteCode]=useState('');
   const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [name,setName]=useState('');const [age,setAge]=useState('');
   const [gender,setGender]=useState('');const [seeking,setSeeking]=useState('');const [ageMin,setAgeMin]=useState('22');const [ageMax,setAgeMax]=useState('35');
-  const [bio,setBio]=useState('');const [city,setCity]=useState('');const [bp1,setBp1]=useState('');const [bp2,setBp2]=useState('');const [bp3,setBp3]=useState('');const [bp4,setBp4]=useState('');const [bp5,setBp5]=useState('');
+  const [bio,setBio]=useState('');const [city,setCity]=useState('');
   const [error,setError]=useState('');const [loading,setLoading]=useState(false);const TOTAL=7;
 
   function handlePhotoChange(e){const file=e.target.files[0];if(!file)return;setPhotoFile(file);const r=new FileReader();r.onload=ev=>setPhotoPreview(ev.target.result);r.readAsDataURL(file);}
@@ -433,15 +433,13 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
     if(step===2)return inviteCode.trim().length>=4;if(step===3)return true;if(step===4)return email.includes('@')&&password.length>=8;
     if(step===5)return name.trim().length>=2&&parseInt(age)>=18&&parseInt(age)<=99;
     if(step===6)return!!gender&&!!seeking&&parseInt(ageMin)>=18&&parseInt(ageMax)<=99&&parseInt(ageMin)<=parseInt(ageMax);
-    if(step===7)return [bp1,bp2,bp3,bp4,bp5].every(p=>p.trim().length>=3);if(step===8)return!!city;return true;
+    if(step===7)return bio.trim().length>=10;if(step===8)return!!city;return true;
   }
 
   async function finish(){
     setError('');setLoading(true);
     try{
-      const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
-      const builtBio=`${cap(bp1.trim())} seeks ${bp2.trim()}. Fond of ${bp3.trim()}. ${cap(bp4.trim())}. Let's ${bp5.trim()}.`;
-      const{token,user}=await apiRegister({email,password,name:name.trim(),age:parseInt(age),gender,seeking,ageMin:parseInt(ageMin),ageMax:parseInt(ageMax),bio:builtBio,city,inviteCode:inviteCode.trim()});
+      const{token,user}=await apiRegister({email,password,name:name.trim(),age:parseInt(age),gender,seeking,ageMin:parseInt(ageMin),ageMax:parseInt(ageMax),bio:bio.trim(),city,inviteCode:inviteCode.trim()});
       localStorage.setItem('bmj_token',token);
       if(photoFile){try{const{photoUrl:url}=await apiUploadPhoto(photoFile);user.photoUrl=url;}catch{}}
       onComplete(user);
@@ -488,34 +486,15 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
         {step===6&&<div className="ob-step" key="s6"><div className="ob-step-num">step 5 of {TOTAL}</div><div className="ob-step-title">Who are you <em>seeking?</em></div><div className="ob-step-sub">This shapes the profiles you'll see each day.</div><GenderPicker label="I am a" value={gender} onChange={setGender} /><GenderPicker label="Looking for" value={seeking} onChange={setSeeking} showAny /><label className="ob-label">Age range I'm open to</label><div className="range-row"><input className="ob-input" type="number" placeholder="Min" value={ageMin} onChange={e=>setAgeMin(e.target.value)} min={18} max={99} /><span className="range-sep">to</span><input className="ob-input" type="number" placeholder="Max" value={ageMax} onChange={e=>setAgeMax(e.target.value)} min={18} max={99} /></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(5)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(7)}>continue →</button></div></div>}
         {step===7&&<div className="ob-step" key="s7">
   <div className="ob-step-num">step 6 of {TOTAL}</div>
-  <div className="ob-step-title">Write your <em>personal ad.</em></div>
-  <div className="ob-step-sub">Answer five prompts. We'll make it sound like you.</div>
-  {(bp1||bp2||bp3||bp4||bp5)&&<div style={{background:'var(--page)',borderBottom:'2px solid var(--pink-dk)',padding:'13px 0',marginBottom:'22px',fontSize:'.93rem',fontStyle:'italic',lineHeight:1.7,color:'var(--ink)'}}>
-    {bp1?<span>{bp1.charAt(0).toUpperCase()+bp1.slice(1)}</span>:<span style={{color:'var(--border-dk)'}}>___</span>}
-    {' seeks '}
-    {bp2?<span>{bp2}</span>:<span style={{color:'var(--border-dk)'}}>someone who ___</span>}
-    {'. Fond of '}
-    {bp3?<span>{bp3}</span>:<span style={{color:'var(--border-dk)'}}>___, ___, and ___</span>}
-    {'. '}
-    {bp4?<span>{bp4.charAt(0).toUpperCase()+bp4.slice(1)}</span>:<span style={{color:'var(--border-dk)'}}>I will definitely ___</span>}
-    {". Let's "}
-    {bp5?<span>{bp5}</span>:<span style={{color:'var(--border-dk)'}}>___</span>}
-    {'.'}
-  </div>}
-  <label className="ob-label"><span style={{color:'var(--pink-dk)'}}>01</span> — I am a ___</label>
-  <input className="ob-input" placeholder="e.g. overeducated romantic with worse jokes than I think" value={bp1} onChange={e=>setBp1(e.target.value)} maxLength={80} />
-  <label className="ob-label"><span style={{color:'var(--pink-dk)'}}>02</span> — seeking someone who ___</label>
-  <input className="ob-input" placeholder="e.g. reads menus like they mean it" value={bp2} onChange={e=>setBp2(e.target.value)} maxLength={80} />
-  <label className="ob-label"><span style={{color:'var(--pink-dk)'}}>03</span> — fond of ___, ___, and ___</label>
-  <input className="ob-input" placeholder="e.g. long dinners, short films, and the silence of a good bookstore" value={bp3} onChange={e=>setBp3(e.target.value)} maxLength={100} />
-  <label className="ob-label"><span style={{color:'var(--pink-dk)'}}>04</span> — one thing I'll definitely do</label>
-  <input className="ob-input" placeholder="e.g. I will absolutely make you a playlist" value={bp4} onChange={e=>setBp4(e.target.value)} maxLength={80} />
-  <label className="ob-label"><span style={{color:'var(--pink-dk)'}}>05</span> — let's ___</label>
-  <input className="ob-input" placeholder="e.g. get lost somewhere new and find out if we're the kind of people who get dessert" value={bp5} onChange={e=>setBp5(e.target.value)} maxLength={120} />
+  <div className="ob-step-title">In your own <em>words.</em></div>
+  <div className="ob-step-sub">Write whatever you want people to know. No format, no prompts — just you.</div>
+  <label className="ob-label">Bio</label>
+  <textarea className="ob-textarea" rows={6} placeholder="e.g. I've lived in four cities and I still can't decide if I'm a morning person. I make good coffee and bad decisions about books — I always start three at once. Looking for someone who takes things seriously without taking themselves too seriously." value={bio} onChange={e=>setBio(e.target.value)} maxLength={400} />
+  <div className="char-count">{bio.length}/400</div>
   <div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(6)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(8)}>continue →</button></div>
 </div>}
         {step===8&&<div className="ob-step" key="s8"><div className="ob-step-num">step 7 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(7)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(9)}>review →</button></div></div>}
-        {step===9&&<div className="ob-step" key="s9"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':seeking==='f'?'women':'anyone'} {ageMin}–{ageMax}</div><div className="review-desc">{bp1&&bp2&&bp3&&bp4&&bp5?`${bp1.charAt(0).toUpperCase()+bp1.slice(1)} seeks ${bp2}. Fond of ${bp3}. ${bp4.charAt(0).toUpperCase()+bp4.slice(1)}. Let's ${bp5}.`:bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(8)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
+        {step===9&&<div className="ob-step" key="s9"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':seeking==='f'?'women':'anyone'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(8)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
       </div>
     </div>
   );
