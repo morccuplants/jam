@@ -63,25 +63,25 @@ const STYLE = `
   .ob-intro-logo { display:block; width:72px; height:72px; border-radius:50%; object-fit:contain; margin:0 auto 18px; }
   .ob-intro-heading { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--pink-dk); letter-spacing:.1em; margin-bottom:6px; }
   .ob-intro-title { font-family:'EB Garamond',serif; font-size:2rem; font-weight:400; line-height:1.2; margin-bottom:20px; }
-  .ob-intro-title em { font-style:regular; color:var(--pink-dk); }
+  .ob-intro-title em { font-style:italic; color:var(--pink-dk); }
   .ob-intro-body { font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink-light); line-height:1.8; flex:1; }
   .ob-intro-body p { margin-bottom:14px; }
   .ob-intro-body p:last-child { margin-bottom:0; }
-  .ob-intro-body strong { font-weight:600; color:var(--ink); font-style:regular; }  .ob-pip { height:5px; flex:1; border-radius:0; background:var(--border); }
+  .ob-intro-body strong { font-weight:600; color:var(--ink); font-style:italic; }  .ob-pip { height:5px; flex:1; border-radius:0; background:var(--border); }
   .ob-pip.done { background:var(--pink-dk); }
   .ob-pip.active { background:var(--pink); }
 
   .onboarding { flex:1; display:flex; flex-direction:column; padding:0 24px 48px; background:var(--cream); }
 
   .ob-logo-wrap { padding:44px 0 24px; text-align:center; }
-  .ob-logo { font-family:'EB Garamond',serif; font-size:2.6rem; font-weight:400; font-style:regular; color:var(--ink); }
+  .ob-logo { font-family:'EB Garamond',serif; font-size:2.6rem; font-weight:400; font-style:italic; color:var(--ink); }
   .ob-logo-sub { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--pink-dk); display:block; margin-top:4px; letter-spacing:.12em; }
 
   .ob-step { flex:1; display:flex; flex-direction:column; animation:fadeInUp .3s ease forwards; }
   .ob-step-num { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--ink-faint); margin-bottom:12px; }
   .ob-step-title { font-family:'EB Garamond',serif; font-size:2rem; font-weight:400; line-height:1.2; margin-bottom:8px; }
-  .ob-step-title em { font-style:regular; color:var(--pink-dk); }
-  .ob-step-sub { font-size:1.05rem; color:var(--ink-light); margin-bottom:28px; line-height:1.7; font-style:regular; }
+  .ob-step-title em { font-style:italic; color:var(--pink-dk); }
+  .ob-step-sub { font-size:1.05rem; color:var(--ink-light); margin-bottom:28px; line-height:1.7; font-style:italic; }
 
   .avatar-upload-area { display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:28px; }
   .avatar-upload-circle { width:112px; height:112px; border-radius:50%; background:var(--page); border:2px dashed var(--border-dk); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; transition:border-color .15s; position:relative; }
@@ -104,7 +104,7 @@ const STYLE = `
   .city-opt:hover { border-color:var(--blue); background:#f4f7ff; }
   .city-opt.selected { border-color:var(--pink-dk); background:#fdf0f6; }
   .city-name { font-size:1.05rem; font-weight:500; margin-bottom:2px; }
-  .city-vibe { font-size:1rem; color:var(--ink-faint); font-style:regular; }
+  .city-vibe { font-size:1rem; color:var(--ink-faint); font-style:italic; }
 
   .gender-row { display:flex; gap:6px; margin-bottom:22px; }
   .gender-opt { flex:1; background:var(--white); border:2px solid var(--border); border-radius:var(--r); padding:14px 10px; cursor:pointer; transition:border-color .12s,background .12s; text-align:center; }
@@ -138,7 +138,7 @@ const STYLE = `
   /* ── Header ── */
   .header { border-bottom:2px solid var(--border-dk); }
   .header-band { background:var(--ink-light); padding:13px 18px 10px; display:flex; align-items:center; justify-content:space-between; }
-  .logo { font-family:'EB Garamond',serif; font-size:1.6rem; font-weight:400; font-style:regular; color:var(--cream); }
+  .logo { font-family:'EB Garamond',serif; font-size:1.6rem; font-weight:400; font-style:italic; color:var(--cream); }
   .logo-sub { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--pink); display:block; margin-top:1px; letter-spacing:.06em; }
   .my-avatar-btn { width:34px; height:34px; border-radius:50%; overflow:hidden; border:2px solid var(--border-dk); cursor:pointer; background:var(--page); display:flex; align-items:center; justify-content:center; font-size:1.05rem; transition:border-color .12s; flex-shrink:0; }
   .my-avatar-btn:hover { border-color:var(--pink); }
@@ -174,7 +174,7 @@ const STYLE = `
 
   .already-chosen { text-align:center; padding:48px 18px; }
   .already-chosen .big-icon { font-size:2.6rem; margin-bottom:12px; }
-  .already-chosen p { font-family:'EB Garamond',serif; color:var(--ink-light); font-size:1rem; line-height:1.7; font-style:regular; }
+  .already-chosen p { font-family:'EB Garamond',serif; color:var(--ink-light); font-size:1rem; line-height:1.7; font-style:italic; }
   .already-chosen strong { color:var(--pink-dk); font-style:normal; }
 
   .notif-list { display:flex; flex-direction:column; gap:8px; }
@@ -208,7 +208,7 @@ const STYLE = `
 
   .empty-state { text-align:center; padding:56px 18px; color:var(--ink-faint); }
   .empty-state .icon { font-size:2.2rem; margin-bottom:12px; }
-  .empty-state p { font-family:'EB Garamond',serif; font-size:1.05rem; line-height:1.7; font-style:regular; }
+  .empty-state p { font-family:'EB Garamond',serif; font-size:1.05rem; line-height:1.7; font-style:italic; }
 
   .matched-banner { background:var(--page); border:2px solid var(--border); border-radius:var(--r); padding:14px; text-align:center; margin-bottom:12px; border-left:4px solid var(--pink-dk); }
   .matched-banner .heart { font-size:1.4rem; }
@@ -218,7 +218,7 @@ const STYLE = `
   /* ── Profile Panel ── */
   .profile-panel { position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; background:var(--cream); max-width:480px; margin:0 auto; animation:slideUp .25s ease forwards; overflow-y:auto; border-left:2px solid var(--border-dk); border-right:2px solid var(--border-dk); }
   .profile-panel-header { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:var(--ink); position:sticky; top:0; z-index:1; border-bottom:2px solid var(--border-dk); }
-  .panel-title { font-family:'EB Garamond',serif; font-size:1.15rem; font-style:regular; color:var(--cream); }
+  .panel-title { font-family:'EB Garamond',serif; font-size:1.15rem; font-style:italic; color:var(--cream); }
   .panel-close { background:transparent; border:2px solid var(--border-dk); color:var(--cream); width:30px; height:30px; border-radius:var(--r); display:flex; align-items:center; justify-content:center; cursor:pointer; font-family:'Pixelify Sans',monospace; font-size:.8rem; transition:border-color .12s; }
   .panel-close:hover { border-color:var(--pink); color:var(--pink); }
   .profile-panel-content { padding:28px; display:flex; flex-direction:column; gap:18px; }
@@ -232,8 +232,8 @@ const STYLE = `
   .holding-hero { padding:36px 24px 24px; text-align:center; }
   .holding-jar { font-size:3rem; display:block; margin-bottom:16px; animation:float 4s ease-in-out infinite; }
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-  .holding-title { font-family:'EB Garamond',serif; font-size:2.2rem; font-weight:400; font-style:regular; line-height:1.15; margin-bottom:8px; color:var(--ink); }
-  .holding-title em { color:var(--pink-dk); font-style:regular; }
+  .holding-title { font-family:'EB Garamond',serif; font-size:2.2rem; font-weight:400; font-style:italic; line-height:1.15; margin-bottom:8px; color:var(--ink); }
+  .holding-title em { color:var(--pink-dk); font-style:italic; }
   .holding-sub { font-size:1rem; color:var(--ink-light); font-style:regular; line-height:1.65; margin-bottom:28px; }
   .holding-countdown { background:var(--white); border:2px solid var(--border-dk); border-top:4px solid var(--pink); padding:18px 20px; margin:0 24px 28px; text-align:center; }
   .holding-countdown-label { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--ink-faint); letter-spacing:.12em; margin-bottom:6px; }
@@ -304,7 +304,7 @@ const STYLE = `
 
   .date-prompt-card { background:var(--white); border:2px solid var(--pink-dk); border-left:4px solid var(--pink-dk); border-radius:var(--r); padding:13px 14px; margin:4px 0; }
   .date-prompt-title { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--pink-dk); margin-bottom:5px; }
-  .date-prompt-text { font-family:'EB Garamond',serif; font-size:1.05rem; color:var(--ink); line-height:1.55; margin-bottom:11px; font-style:regular; }
+  .date-prompt-text { font-family:'EB Garamond',serif; font-size:1.05rem; color:var(--ink); line-height:1.55; margin-bottom:11px; font-style:italic; }
   .date-prompt-actions { display:flex; gap:7px; }
   .btn-yes { flex:1; padding:9px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.75rem; cursor:pointer; transition:background .12s; }
   .btn-yes:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
@@ -315,7 +315,7 @@ const STYLE = `
 
   .unmatch-notice { background:#fdf0f0; border:2px solid #e0b0b0; border-radius:var(--r); padding:16px; text-align:center; margin:6px 0; }
   .unmatch-notice .icon { font-size:1.6rem; margin-bottom:6px; }
-  .unmatch-notice p { font-family:'EB Garamond',serif; font-size:1.05rem; color:#8a3030; line-height:1.6; font-style:regular; }
+  .unmatch-notice p { font-family:'EB Garamond',serif; font-size:1.05rem; color:#8a3030; line-height:1.6; font-style:italic; }
 
   .chat-input-bar { padding:10px 12px; border-top:2px solid var(--border-dk); background:var(--page); display:flex; gap:8px; align-items:flex-end; flex-shrink:0; }
   .chat-input { flex:1; background:transparent; border:none; border-bottom:2px solid var(--border-dk); border-radius:0; padding:10px 0; font-family:'EB Garamond',serif; font-size:1.1rem; color:var(--ink); outline:none; resize:none; max-height:110px; line-height:1.5; transition:border-color .12s; }
@@ -528,7 +528,7 @@ function EditProfilePanel({ user, onSave, onClose }) {
         <GenderPicker label="I am a" value={gender} onChange={setGender} />
         <GenderPicker label="Looking for" value={seeking} onChange={setSeeking} showAny />
         <div><label className="ob-label">Age range</label><div className="range-row"><input className="ob-input" type="number" value={ageMin} onChange={e=>setAgeMin(e.target.value)} min={18} max={99} /><span className="range-sep">to</span><input className="ob-input" type="number" value={ageMax} onChange={e=>setAgeMax(e.target.value)} min={18} max={99} /></div></div>
-        <div><label className="ob-label">Bio <span style={{color:"var(--ink-faint)",fontStyle:"regular"}}>— edit your personal ad</span></label><textarea className="ob-textarea" rows={5} value={bio} onChange={e=>setBio(e.target.value)} maxLength={280} /><div className="char-count">{bio.length}/280</div></div>
+        <div><label className="ob-label">Bio <span style={{color:"var(--ink-faint)",fontStyle:"italic"}}>— edit your personal ad</span></label><textarea className="ob-textarea" rows={5} value={bio} onChange={e=>setBio(e.target.value)} maxLength={280} /><div className="char-count">{bio.length}/280</div></div>
         <div><label className="ob-label">City</label><CityPicker value={city} onChange={setCity} /></div>
         <button className="panel-save-btn" onClick={save} disabled={saving}>{saving?'saving...':'save changes'}</button>
       </div>
@@ -916,7 +916,7 @@ export default function App() {
     if(!token){setScreen('onboarding');return;}
     apiGetMe().then(u=>{setUser(u);const launched=new Date()>=new Date(import.meta.env.VITE_LAUNCH_DATE||'2025-05-27T14:00:00-4:00');setScreen(launched?'app':'holding');}).catch(()=>{localStorage.removeItem('bmj_token');setScreen('onboarding');});
   },[]);
-  if(screen==='loading')return(<><style>{STYLE}</style><div className="loading-screen"><div style={{fontFamily:"'EB Garamond',serif",fontSize:'2.1rem',fontStyle:'regular',color:'var(--ink)'}}>be my jam</div><div className="loading-cursor">_</div></div></>);
+  if(screen==='loading')return(<><style>{STYLE}</style><div className="loading-screen"><div style={{fontFamily:"'EB Garamond',serif",fontSize:'2.1rem',fontStyle:'italic',color:'var(--ink)'}}>be my jam</div><div className="loading-cursor">_</div></div></>);
   return(
     <><style>{STYLE}</style>
     {screen==='onboarding'&&<Onboarding onComplete={u=>{setUser(u);setScreen('holding');}} onSwitchToLogin={()=>setScreen('login')} />}
