@@ -7,9 +7,14 @@ const router = express.Router();
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { email, password, name, age, gender, seeking, ageMin, ageMax, bio, city, inviteCode } = req.body;
+  const {
+    email, password, name, age, gender, seeking, ageMin, ageMax,
+    bio, city, inviteCode,
+    rel_length,   // raw integer index 0–4; stored for hard filtering in discover
+    quizScores,   // { annoyances, substances, values, chemistry, fun, sex }
+  } = req.body;
 
-  if (!email || !password || !name || !age || !gender || !seeking || !city ) {
+  if (!email || !password || !name || !age || !gender || !seeking || !city) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
   if (password.length < 8) {
@@ -37,11 +42,24 @@ router.post('/register', async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 12);
+
+    // Normalise quizScores — default to null if client didn't send them
+    const scores = quizScores || {};
+
     const result = await pool.query(
-      `INSERT INTO users (email, password, name, age, gender, seeking, age_min, age_max, bio, city)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-       RETURNING id, email, name, age, gender, seeking, age_min, age_max, bio, city, photo_url`,
-      [email.toLowerCase(), hashed, name, age, gender, seeking, ageMin || 18, ageMax || 99, bio || '', city]
+      `INSERT INTO users (
+        email, password, name, age, gender, seeking, age_min, age_max, bio, city,
+        rel_length, quiz_scores
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       RETURNING id, email, name, age, gender, seeking, age_min, age_max, bio, city,
+                 photo_url, rel_length, quiz_scores`,
+      [
+        email.toLowerCase(), hashed, name, age, gender, seeking,
+        ageMin || 18, ageMax || 99, bio || '', city,
+        rel_length ?? null,
+        Object.keys(scores).length > 0 ? JSON.stringify(scores) : null,
+      ]
     );
 
     const user = result.rows[0];
