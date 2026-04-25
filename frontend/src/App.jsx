@@ -6,6 +6,7 @@ import {
   apiGetPreviewUsers,
 } from "./api.js";
 import { requestPushPermission } from "./push.js";
+import { QUIZ_QUESTIONS, QUIZ_SECTIONS, scoreAnswers } from "./quiz.js";
 
 const STYLE = `
   @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Pixelify+Sans:wght@400;500;600;700&display=swap');
@@ -330,6 +331,21 @@ const STYLE = `
   .open-chat-btn.has-unread { border-color:var(--pink-dk); color:var(--pink-dk); background:#fdf6fa; }
   .unmatch-btn { width:100%; margin-top:6px; padding:9px; background:transparent; color:var(--ink-faint); border:2px solid var(--border); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.75rem; cursor:pointer; transition:color .12s,border-color .12s; }
   .unmatch-btn:hover { color:#c03030; border-color:#e0b0b0; background:#fdf0f0; }
+
+  /* ── Quiz ── */
+  .quiz-section-label { font-family:'Pixelify Sans',monospace; font-size:.72rem; letter-spacing:.1em; color:var(--pink-dk); text-transform:uppercase; margin-bottom:6px; }
+  .quiz-q-title { font-family:'EB Garamond',serif; font-size:1.45rem; font-weight:400; line-height:1.25; margin-bottom:5px; color:var(--ink); }
+  .quiz-q-title em { font-style:italic; color:var(--pink-dk); }
+  .quiz-q-sub { font-size:.92rem; color:var(--ink-faint); font-style:italic; margin-bottom:1.1rem; line-height:1.55; }
+  .quiz-opts { display:flex; flex-direction:column; gap:7px; margin-bottom:1.2rem; }
+  .quiz-opt { background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:12px 14px; cursor:pointer; font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink); line-height:1.5; text-align:left; transition:border-color .1s,background .1s; }
+  .quiz-opt:hover { border-color:var(--blue); background:#f5f7ff; }
+  .quiz-opt.selected { border-color:var(--pink-dk); background:#fdf0f6; }
+  .quiz-skip { display:block; width:100%; background:transparent; border:none; padding:4px 0 10px; font-family:'Pixelify Sans',monospace; font-size:.72rem; color:var(--ink-faint); cursor:pointer; text-align:left; transition:color .1s; }
+  .quiz-skip:hover { color:var(--pink-dk); }
+  .quiz-q-nav { display:flex; gap:8px; padding-top:2px; }
+  .quiz-q-counter { font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:10px; }
+  .char-count { text-align:right; font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:1.2rem; }
 `;
 
 const CITIES = [
@@ -420,12 +436,94 @@ function LoginScreen({ onLogin }) {
   );
 }
 
+// ─── QuizSection ─────────────────────────────────────────────────────────────
+// Renders all questions in a single QUIZ_SECTIONS entry, one at a time.
+// Props:
+//   section      — one entry from QUIZ_SECTIONS
+//   answers      — { [questionId]: number | number[] | null }
+//   onChange     — (questionId, value) => void
+//   onBack       — () => void  (back from first question → previous onboarding step)
+//   onComplete   — () => void  (forward from last question → next onboarding step)
+//   obStepLabel  — string shown in ob-step-num, e.g. "step 8 of 13"
+
+function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLabel }) {
+  const [qIdx, setQIdx] = useState(0);
+  const questions = section.questionIds.map(id => QUIZ_QUESTIONS.find(q => q.id === id));
+  const q = questions[qIdx];
+  const val = answers[q.id];
+
+  function canAdvanceQ() {
+    if (q.skippable) return true;
+    if (q.type === 'mc_single') return val !== undefined && val !== null;
+    if (q.type === 'mc_multi') return Array.isArray(val) && val.length >= 1;
+    return true;
+  }
+
+  function handleSingle(idx) { onChange(q.id, idx); }
+
+  function handleMulti(idx) {
+    const prev = Array.isArray(val) ? val : [];
+    const next = prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx];
+    if (q.max && next.length > q.max) return;
+    onChange(q.id, next);
+  }
+
+  function handleSkip() { onChange(q.id, null); goNext(); }
+
+  function goNext() {
+    if (qIdx < questions.length - 1) { setQIdx(qIdx + 1); }
+    else { onComplete(); }
+  }
+
+  function goBack() {
+    if (qIdx > 0) { setQIdx(qIdx - 1); }
+    else { onBack(); }
+  }
+
+  const isMulti = q.type === 'mc_multi';
+  const selectedArr = Array.isArray(val) ? val : [];
+
+  return (
+    <div className="ob-step" key={`${section.id}-${qIdx}`}>
+      <div className="ob-step-num">{obStepLabel}</div>
+      <div className="quiz-section-label">{section.label}</div>
+      <div className="quiz-q-counter">{qIdx + 1} / {questions.length}</div>
+      <div className="quiz-q-title" dangerouslySetInnerHTML={{ __html: q.title }} />
+      {q.sub && <div className="quiz-q-sub">{q.sub}</div>}
+      <div className="quiz-opts">
+        {q.options.map((opt, i) => {
+          const sel = isMulti ? selectedArr.includes(i) : val === i;
+          return (
+            <button
+              key={i}
+              className={`quiz-opt${sel ? ' selected' : ''}`}
+              onClick={() => isMulti ? handleMulti(i) : handleSingle(i)}
+            >{opt}</button>
+          );
+        })}
+      </div>
+      {q.skippable && (
+        <button className="quiz-skip" onClick={handleSkip}>{q.skipLabel || "skip this question"}</button>
+      )}
+      <div className="quiz-q-nav">
+        <button className="ob-btn-back" onClick={goBack}>←</button>
+        <button className="ob-btn-primary" disabled={!canAdvanceQ()} onClick={goNext}>
+          {qIdx < questions.length - 1 ? 'next →' : 'continue →'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Onboarding({ onComplete, onSwitchToLogin }) {
   const [step,setStep]=useState(0);const [photoFile,setPhotoFile]=useState(null);const [photoPreview,setPhotoPreview]=useState(null);const [inviteCode,setInviteCode]=useState('');
   const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [name,setName]=useState('');const [age,setAge]=useState('');
   const [gender,setGender]=useState('');const [seeking,setSeeking]=useState('');const [ageMin,setAgeMin]=useState('22');const [ageMax,setAgeMax]=useState('35');
   const [bio,setBio]=useState('');const [city,setCity]=useState('');
-  const [error,setError]=useState('');const [loading,setLoading]=useState(false);const TOTAL=7;
+  const [quizAnswers,setQuizAnswers]=useState({});
+  const [error,setError]=useState('');const [loading,setLoading]=useState(false);
+  // Steps 2–8: existing onboarding. Steps 9–12: quiz sections. Step 13: city. Step 14: review.
+  const TOTAL=13;
 
   function handlePhotoChange(e){const file=e.target.files[0];if(!file)return;setPhotoFile(file);const r=new FileReader();r.onload=ev=>setPhotoPreview(ev.target.result);r.readAsDataURL(file);}
 
@@ -433,21 +531,24 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
     if(step===2)return inviteCode.trim().length>=4;if(step===3)return true;if(step===4)return email.includes('@')&&password.length>=8;
     if(step===5)return name.trim().length>=2&&parseInt(age)>=18&&parseInt(age)<=99;
     if(step===6)return!!gender&&!!seeking&&parseInt(ageMin)>=18&&parseInt(ageMax)<=99&&parseInt(ageMin)<=parseInt(ageMax);
-    if(step===7)return bio.trim().length>=10;if(step===8)return!!city;return true;
+    if(step===7)return bio.trim().length>=10;if(step===13)return!!city;return true;
   }
 
   async function finish(){
     setError('');setLoading(true);
     try{
-      const{token,user}=await apiRegister({email,password,name:name.trim(),age:parseInt(age),gender,seeking,ageMin:parseInt(ageMin),ageMax:parseInt(ageMax),bio:bio.trim(),city,inviteCode:inviteCode.trim()});
+      const scores=scoreAnswers(quizAnswers);
+      const{rel_length,...quizScores}=scores;
+      const{token,user}=await apiRegister({email,password,name:name.trim(),age:parseInt(age),gender,seeking,ageMin:parseInt(ageMin),ageMax:parseInt(ageMax),bio:bio.trim(),city,inviteCode:inviteCode.trim(),rel_length,quizScores});
       localStorage.setItem('bmj_token',token);
       if(photoFile){try{const{photoUrl:url}=await apiUploadPhoto(photoFile);user.photoUrl=url;}catch{}}
       onComplete(user);
     }catch(err){setError(err.message);setLoading(false);}
   }
 
+  function setQuizAnswer(id, val){ setQuizAnswers(prev=>({...prev,[id]:val})); }
   const formStep=Math.max(0,step-2);
-  const pips=Array.from({length:6},(_,i)=><div key={i} className={`ob-pip ${i<formStep?'done':i===formStep?'active':''}`} />);
+  const pips=Array.from({length:TOTAL},(_,i)=><div key={i} className={`ob-pip ${i<formStep?'done':i===formStep?'active':''}`} />);
 
   return (
     <div className="app">
@@ -491,10 +592,14 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   <label className="ob-label">Bio</label>
   <textarea className="ob-textarea" rows={6} placeholder="e.g. I've lived in four cities and I still can't decide if I'm a morning person. I make good coffee and bad decisions about books — I always start three at once. Looking for someone who takes things seriously without taking themselves too seriously." value={bio} onChange={e=>setBio(e.target.value)} maxLength={400} />
   <div className="char-count">{bio.length}/400</div>
-  <div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(6)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(8)}>continue →</button></div>
+  <div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(6)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(9)}>continue →</button></div>
 </div>}
-        {step===8&&<div className="ob-step" key="s8"><div className="ob-step-num">step 7 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(7)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(9)}>review →</button></div></div>}
-        {step===9&&<div className="ob-step" key="s9"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':seeking==='f'?'women':'anyone'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(8)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
+        {step===9&&<QuizSection section={QUIZ_SECTIONS[0]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(7)} onComplete={()=>setStep(10)} obStepLabel={`step 8 of ${TOTAL}`} />}
+        {step===10&&<QuizSection section={QUIZ_SECTIONS[1]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(9)} onComplete={()=>setStep(11)} obStepLabel={`step 9 of ${TOTAL}`} />}
+        {step===11&&<QuizSection section={QUIZ_SECTIONS[2]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(10)} onComplete={()=>setStep(12)} obStepLabel={`step 10 of ${TOTAL}`} />}
+        {step===12&&<QuizSection section={QUIZ_SECTIONS[3]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(11)} onComplete={()=>setStep(13)} obStepLabel={`step 11 of ${TOTAL}`} />}
+        {step===13&&<div className="ob-step" key="s13"><div className="ob-step-num">step 12 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(12)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(14)}>review →</button></div></div>}
+        {step===14&&<div className="ob-step" key="s14"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':seeking==='f'?'women':'anyone'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(13)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
       </div>
     </div>
   );
