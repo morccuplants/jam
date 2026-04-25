@@ -299,6 +299,12 @@ export function scoreAnswers(answers) {
 
 export function compatible(a, b) {
   return {
+    rel_length: (a.rel_length === null || a.rel_length === undefined ||
+                 b.rel_length === null || b.rel_length === undefined)
+      ? null
+      : a.rel_length === b.rel_length ? 'high'
+      : Math.abs(a.rel_length - b.rel_length) === 1 ? 'medium'
+      : 'low',
     values    : _band(_jaccardBits(a.annoyances, b.annoyances, 9) * 0.4 +
                       _jaccardBits(a.substances, b.substances, 7) * 0.6),
     chemistry : _band(_scalarSim(a.chemistry, b.chemistry)),

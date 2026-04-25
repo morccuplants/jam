@@ -2,6 +2,7 @@ const express = require('express');
 const pool = require('../db/pool');
 const requireAuth = require('../middleware/auth');
 const { sendPushToUser } = require('../services/push');
+const { compatible } = require('../../frontend/src/quiz.js');
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.get('/', requireAuth, async (req, res) => {
 
     // Check if picks already exist for today
     const existing = await pool.query(
-      `SELECT u.id, u.name, u.age, u.gender, u.city, u.bio, u.photo_url
+      `SELECT u.id, u.name, u.age, u.gender, u.city, u.bio, u.photo_url, u.quiz_scores, u.rel_length
        FROM daily_picks dp
        JOIN users u ON u.id = dp.profile_id
        WHERE dp.user_id = $1 AND dp.pick_date = $2
@@ -22,20 +23,26 @@ router.get('/', requireAuth, async (req, res) => {
     );
 
     if (existing.rows.length > 0) {
-      // Also check if they've already made a choice today
+      const currentUser = await pool.query(
+        'SELECT quiz_scores, rel_length FROM users WHERE id = $1', [userId]
+      );
+      const cu = currentUser.rows[0];
+      const myScores = cu?.quiz_scores
+        ? { ...cu.quiz_scores, rel_length: cu.rel_length ?? null }
+        : null;
       const choice = await pool.query(
         'SELECT chosen_id FROM choices WHERE chooser_id = $1 AND pick_date = $2',
         [userId, today]
       );
       return res.json({
-        profiles: existing.rows.map(profilePublic),
+        profiles: existing.rows.map(p => profilePublic(p, myScores)),
         chosenId: choice.rows[0]?.chosen_id || null,
       });
     }
 
     // No picks yet — generate them now (also called by cron at 2pm)
-    const picks = await assignDailyPicks(userId, today);
-    res.json({ profiles: picks.map(profilePublic), chosenId: null });
+    const { picks, myScores } = await assignDailyPicks(userId, today);
+    res.json({ profiles: picks.map(p => profilePublic(p, myScores)), chosenId: null });
   } catch (err) {
     console.error('Discover error:', err);
     res.status(500).json({ error: 'Server error' });
@@ -275,18 +282,21 @@ router.delete('/matches/:matchId', requireAuth, async (req, res) => {
 // ── Helpers ──────────────────────────────────────────────────
 
 async function assignDailyPicks(userId, date) {
-  // Get user preferences
+  // Get user preferences and scores
   const userResult = await pool.query(
-    'SELECT gender, seeking, age_min, age_max, city FROM users WHERE id = $1',
+    'SELECT gender, seeking, age_min, age_max, city, rel_length, quiz_scores FROM users WHERE id = $1',
     [userId]
   );
   const user = userResult.rows[0];
-  if (!user) return [];
+  if (!user) return { picks: [], myScores: null };
 
-  // Find eligible profiles: right gender, right age range, same city, not self
-  // Shuffle using random() — deterministic within a transaction for fairness
+  const myScores = user.quiz_scores
+    ? { ...user.quiz_scores, rel_length: user.rel_length ?? null }
+    : null;
+
+  // Find eligible profiles — same rel_length required if the user completed the quiz
   const eligible = await pool.query(
-    `SELECT id, name, age, gender, city, bio, photo_url
+    `SELECT id, name, age, gender, city, bio, photo_url, quiz_scores, rel_length
      FROM users
      WHERE id != $1
        AND age >= $3
@@ -314,12 +324,17 @@ async function assignDailyPicks(userId, date) {
     );
   }
 
-  return picks;
+  return { picks, myScores };
 }
 
-function profilePublic(u) {
+function profilePublic(u, myScores) {
+  const theirScores = u.quiz_scores
+    ? { ...u.quiz_scores, rel_length: u.rel_length ?? null }
+    : null;
+  const compat = (myScores && theirScores) ? compatible(myScores, theirScores) : null;
   return {
     id: u.id, name: u.name, age: u.age, city: u.city, bio: u.bio, photoUrl: u.photo_url,
+    compat,
   };
 }
 
