@@ -1060,8 +1060,8 @@ export default function App() {
   if(screen==='loading')return(<><style>{STYLE}</style><div className="loading-screen"><div style={{fontFamily:"'EB Garamond',serif",fontSize:'2.1rem',fontStyle:'italic',color:'var(--ink)'}}>be my jam</div><div className="loading-cursor">_</div></div></>);
   return(
     <><style>{STYLE}</style>
-    {screen==='onboarding'&&<Onboarding onComplete={u=>{setUser(u);setScreen('holding');}} onSwitchToLogin={()=>setScreen('login')} />}
-    {screen==='login'&&<div className="app"><LoginScreen onLogin={u=>{setUser(u);setScreen('holding');}} /><div className="login-toggle" style={{padding:'0 24px 32px',position:'relative',zIndex:1}}>new here? <button onClick={()=>setScreen('onboarding')}>create account</button></div></div>}
+    {screen==='onboarding'&&<Onboarding onComplete={u=>{setUser(u);setScreen('app');}} onSwitchToLogin={()=>setScreen('login')} />}
+    {screen==='login'&&<div className="app"><LoginScreen onLogin={u=>{setUser(u);setScreen('app');}} /><div className="login-toggle" style={{padding:'0 24px 32px',position:'relative',zIndex:1}}>new here? <button onClick={()=>setScreen('onboarding')}>create account</button></div></div>}
     {screen==='holding'&&user&&<HoldingScreen user={user} />}
     {screen==='app'&&user&&<MainApp user={user} setUser={u=>setUser(u)} />}
     </>
