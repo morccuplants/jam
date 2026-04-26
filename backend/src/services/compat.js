@@ -7,7 +7,7 @@ function compatible(a, b) {
     rel_length: (a.rel_length == null || b.rel_length == null)
       ? null
       : a.rel_length === b.rel_length ? 'high'
-      : Math.abs(a.rel_length - b.rel_length) === 1 ? 'medium'
+      : Math.abs(a.rel_length - b.rel_length) <= 2 ? 'medium'
       : 'low',
     values:    _band(_jaccardBits(a.annoyances, b.annoyances, 9) * 0.4 +
                      _jaccardBits(a.substances, b.substances, 7) * 0.6),
