@@ -346,6 +346,17 @@ const STYLE = `
   .quiz-q-nav { display:flex; gap:8px; padding-top:2px; }
   .quiz-q-counter { font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:10px; }
   .char-count { text-align:right; font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:1.2rem; }
+
+  /* ── Compat tags ── */
+  .compat-tags { display:flex; flex-wrap:wrap; gap:4px; justify-content:center; margin-top:7px; }
+  .compat-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:999px; font-family:'Pixelify Sans',monospace; font-size:.62rem; border:1px solid; }
+  .compat-tag-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .compat-high { background:#fdf0f6; color:#72243E; border-color:#c87090; }
+  .compat-high .compat-tag-dot { background:#c87090; }
+  .compat-med  { background:#fdf6e8; color:#633806; border-color:#e8a030; }
+  .compat-med  .compat-tag-dot { background:#e8a030; }
+  .compat-low  { background:#f4f3f1; color:#555553; border-color:#aaa9a5; }
+  .compat-low  .compat-tag-dot { background:#aaa9a5; }
 `;
 
 const CITIES = [
@@ -445,6 +456,31 @@ function LoginScreen({ onLogin }) {
 //   onBack       — () => void  (back from first question → previous onboarding step)
 //   onComplete   — () => void  (forward from last question → next onboarding step)
 //   obStepLabel  — string shown in ob-step-num, e.g. "step 8 of 13"
+
+// ─── CompatTags ──────────────────────────────────────────────────────────────
+const COMPAT_LABEL = {
+  rel_length: 'relationship goals',
+  values:     'values',
+  chemistry:  'chemistry',
+  fun:        'fun',
+  sex:        'sex',
+};
+
+function CompatTags({ compat }) {
+  if (!compat) return null;
+  const entries = Object.entries(compat).filter(([, v]) => v !== null);
+  if (entries.length === 0) return null;
+  return (
+    <div className="compat-tags">
+      {entries.map(([key, band]) => (
+        <span key={key} className={`compat-tag compat-${band === 'high' ? 'high' : band === 'medium' ? 'med' : 'low'}`}>
+          <span className="compat-tag-dot" />
+          {COMPAT_LABEL[key] || key}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLabel }) {
   const [qIdx, setQIdx] = useState(0);
@@ -965,7 +1001,7 @@ function MainApp({ user: initialUser, setUser }) {
               {loadingDiscover?<div className="empty-state"><div style={{fontFamily:"'Pixelify Sans',monospace",fontSize:'.7rem',color:'var(--ink-faint)'}}>loading...</div></div>
               :chosenId?<div className="already-chosen fade-in"><div className="big-icon">🍓</div><p>You chose <strong>{chosenProfile?.name||'someone'}</strong> today.<br/>They've been notified. Check back tomorrow.</p></div>
               :profiles.length===0?<div className="empty-state"><div className="icon">🔭</div><p>No profiles match your preferences in {user.city} right now. Try widening your age range.</p></div>
-              :<><div className="profiles-grid">{profiles.map(p=><div key={p.id} className={`profile-card ${selected?.id===p.id?'selected':''}`} onClick={()=>setSelected(p)}><div className="avatar-wrap">{p.photoUrl?<img className="avatar-img" src={photoUrl(p.photoUrl)} alt={p.name} />:<div className="avatar-placeholder">🌟</div>}</div><div className="profile-name">{p.name}</div><div className="profile-age">{p.age} · {p.city}</div><div className="profile-desc">{p.bio}</div></div>)}</div><button className="choose-btn" disabled={!selected||choosing} onClick={handleChoose}>{choosing?'choosing...':selected?`choose ${selected.name} ♥`:'select someone'}</button></>}
+              :<><div className="profiles-grid">{profiles.map(p=><div key={p.id} className={`profile-card ${selected?.id===p.id?'selected':''}`} onClick={()=>setSelected(p)}><div className="avatar-wrap">{p.photoUrl?<img className="avatar-img" src={photoUrl(p.photoUrl)} alt={p.name} />:<div className="avatar-placeholder">🌟</div>}</div><div className="profile-name">{p.name}</div><div className="profile-age">{p.age} · {p.city}</div><div className="profile-desc">{p.bio}</div><CompatTags compat={p.compat} /></div>)}</div><button className="choose-btn" disabled={!selected||choosing} onClick={handleChoose}>{choosing?'choosing...':selected?`choose ${selected.name} ♥`:'select someone'}</button></>}
             </div>
           )}
           {tab==='notifications'&&(
