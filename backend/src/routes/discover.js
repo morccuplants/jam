@@ -2,7 +2,7 @@ const express = require('express');
 const pool = require('../db/pool');
 const requireAuth = require('../middleware/auth');
 const { sendPushToUser } = require('../services/push');
-const { compatible } = require('../../frontend/src/quiz.js');
+const { compatible } = require('../services/compat');
 
 const router = express.Router();
 
