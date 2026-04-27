@@ -162,14 +162,14 @@ const STYLE = `
   .profile-card:hover { border-color:var(--blue); background:#f5f7ff; }
   .profile-card.selected { border-color:var(--pink-dk); background:#fdf0f6; border-top:3px solid var(--pink-dk); }
   .profile-card.selected::after { content:'♥'; position:absolute; top:6px; right:8px; font-size:.75rem; color:var(--pink-dk); }
-  .avatar-wrap { width:72px; height:72px; border-radius:50%; margin:0 auto 8px; }
-  .avatar-placeholder { width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; background:var(--page); border:2px solid var(--border); }
-  .avatar-img { width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid var(--border); }
+  .avatar-wrap { width:100px; height:100px; border-radius:50%; margin:0 auto 8px; }
+  .avatar-placeholder { width:100px; height:100px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; background:var(--page); border:2px solid var(--border); }
+  .avatar-img { width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--border); }
   .profile-name { font-family:'EB Garamond',serif; font-size:1.2rem; font-weight:500; margin-bottom:2px; }
   .profile-age { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--ink-faint); margin-bottom:5px; }
   .profile-desc { font-size:1rem; color:var(--ink-light); line-height:1.7; }
 
-  .choose-btn { width:100%; margin-top:18px; padding:15px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.95rem; cursor:pointer; transition:background .12s; }
+  .choose-btn { width:100%; margin-top:18px; padding:15px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.90rem; cursor:pointer; transition:background .12s; }
   .choose-btn:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
   .choose-btn:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
 
