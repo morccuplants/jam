@@ -146,7 +146,7 @@ const STYLE = `
   .my-avatar-btn img { width:100%; height:100%; object-fit:cover; }
 
   .nav { display:flex; background:var(--page); border-bottom:2px solid var(--border-dk); padding:0; }
-  .nav-btn { background:none; border:none; border-right:1px solid var(--border); color:var(--ink-faint); font-family:'Pixelify Sans',monospace; font-size:.75rem; padding:11px 16px; cursor:pointer; position:relative; transition:color .12s,background .12s; }
+  .nav-btn { background:none; border:none; border-right:1px solid var(--border); color:var(--ink-faint); font-family:'Pixelify Sans',monospace; font-size:.85rem; padding:11px 16px; cursor:pointer; position:relative; transition:color .12s,background .12s; }
   .nav-btn:last-child { border-right:none; }
   .nav-btn.active { color:var(--ink); background:var(--cream); border-bottom:2px solid var(--pink-dk); margin-bottom:-2px; }
   .badge { background:var(--pink-dk); color:var(--white); border-radius:2px; font-family:'Pixelify Sans',monospace; font-size:.75rem; padding:1px 5px; margin-left:4px; vertical-align:middle; }
@@ -348,9 +348,9 @@ const STYLE = `
   .char-count { text-align:right; font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:1.2rem; }
 
   /* ── Compat tags ── */
-  .compat-tags { display:flex; flex-wrap:wrap; gap:4px; justify-content:center; margin-top:7px; }
-  .compat-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:999px; font-family:'Pixelify Sans',monospace; font-size:.62rem; border:1px solid; }
-  .compat-tag-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .compat-tags { display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:7px; }
+  .compat-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:999px; font-family:'Pixelify Sans',monospace; font-size:.69rem; border:1px solid; }
+  .compat-tag-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
   .compat-high { background:#fdf0f6; color:#72243E; border-color:#c87090; }
   .compat-high .compat-tag-dot { background:#c87090; }
   .compat-med  { background:#fdf6e8; color:#633806; border-color:#e8a030; }
