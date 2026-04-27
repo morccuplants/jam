@@ -169,7 +169,7 @@ const STYLE = `
   .profile-age { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--ink-faint); margin-bottom:5px; }
   .profile-desc { font-size:1rem; color:var(--ink-light); line-height:1.7; }
 
-  .choose-btn { width:100%; margin-top:18px; padding:15px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.85rem; cursor:pointer; transition:background .12s; }
+  .choose-btn { width:100%; margin-top:18px; padding:15px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.95rem; cursor:pointer; transition:background .12s; }
   .choose-btn:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
   .choose-btn:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
 
