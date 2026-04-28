@@ -167,7 +167,23 @@ const STYLE = `
   .avatar-img { width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--border); }
   .profile-name { font-family:'EB Garamond',serif; font-size:1.2rem; font-weight:500; margin-bottom:2px; }
   .profile-age { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--ink-faint); margin-bottom:5px; }
-  .profile-desc { font-size:1rem; color:var(--ink-light); line-height:1.7; }
+  .profile-desc { font-size:.9rem; color:var(--ink-light); line-height:1.7; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:6px; }
+  .expand-hint { font-family:'Pixelify Sans',monospace; font-size:.58rem; color:var(--ink-faint); margin-top:4px; }
+  .profile-overlay { position:fixed; inset:0; background:var(--cream); z-index:100; display:flex; flex-direction:column; max-width:480px; margin:0 auto; animation:fadeInUp .2s ease forwards; border-left:2px solid var(--border-dk); border-right:2px solid var(--border-dk); }
+  .overlay-back { display:flex; align-items:center; gap:8px; padding:14px 18px 12px; border-bottom:2px solid var(--border-dk); font-family:'Pixelify Sans',monospace; font-size:.72rem; color:var(--ink-faint); cursor:pointer; background:none; border-left:none; border-right:none; border-top:none; width:100%; text-align:left; }
+  .overlay-back:hover { color:var(--pink-dk); }
+  .overlay-body { flex:1; padding:32px 28px 24px; display:flex; flex-direction:column; align-items:center; text-align:center; overflow-y:auto; }
+  .overlay-avatar { margin-bottom:20px; }
+  .overlay-name { font-family:'EB Garamond',serif; font-size:2rem; font-weight:500; margin-bottom:4px; }
+  .overlay-age { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--ink-faint); margin-bottom:20px; }
+  .overlay-rule { width:40px; height:2px; background:var(--border-dk); margin:0 auto 20px; }
+  .overlay-bio { font-size:1.1rem; color:var(--ink-light); line-height:1.8; margin-bottom:24px; max-width:340px; }
+  .overlay-compat-tags { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:28px; }
+  .overlay-compat-tags .compat-tag { font-size:.7rem; padding:5px 12px; }
+  .overlay-compat-tags .compat-tag-dot { width:6px; height:6px; }
+  .overlay-choose { width:100%; padding:15px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.75rem; cursor:pointer; transition:background .12s; margin-top:auto; }
+  .overlay-choose:hover { background:var(--pink-dk); color:var(--white); }
+  .overlay-choose:disabled { background:var(--border); border-color:var(--border-dk); color:var(--ink-faint); cursor:not-allowed; }
 
   .choose-btn { width:100%; margin-top:18px; padding:15px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.90rem; cursor:pointer; transition:background .12s; }
   .choose-btn:hover:not(:disabled) { background:var(--pink-dk); color:var(--white); }
@@ -333,7 +349,12 @@ const STYLE = `
   .unmatch-btn:hover { color:#c03030; border-color:#e0b0b0; background:#fdf0f0; }
 
   /* ── Quiz ── */
-  .quiz-section-label { font-family:'Pixelify Sans',monospace; font-size:.72rem; letter-spacing:.1em; color:var(--pink-dk); text-transform:uppercase; margin-bottom:6px; }
+  .quiz-section-label { font-family:'Pixelify Sans',monospace; font-size:.95rem; letter-spacing:.08em; color:var(--pink-dk); text-transform:uppercase; margin-bottom:10px; }
+  .quiz-interstitial { flex:1; display:flex; flex-direction:column; justify-content:center; animation:fadeInUp .3s ease forwards; }
+  .quiz-interstitial-icon { font-size:2.2rem; margin-bottom:16px; }
+  .quiz-interstitial-title { font-family:'EB Garamond',serif; font-size:2rem; font-weight:400; line-height:1.2; margin-bottom:14px; color:var(--ink); }
+  .quiz-interstitial-title em { font-style:italic; color:var(--pink-dk); }
+  .quiz-interstitial-body { font-family:'EB Garamond',serif; font-size:1.05rem; color:var(--ink-light); line-height:1.8; margin-bottom:28px; }
   .quiz-q-title { font-family:'EB Garamond',serif; font-size:1.45rem; font-weight:400; line-height:1.25; margin-bottom:5px; color:var(--ink); }
   .quiz-q-title em { font-style:italic; color:var(--pink-dk); }
   .quiz-q-sub { font-size:.92rem; color:var(--ink-faint); font-style:italic; margin-bottom:1.1rem; line-height:1.55; }
@@ -538,11 +559,11 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
           );
         })}
       </div>
-      {q.skippable && (
-        <button className="quiz-skip" onClick={handleSkip}>{q.skipLabel || "skip this question"}</button>
-      )}
       <div className="quiz-q-nav">
         <button className="ob-btn-back" onClick={goBack}>←</button>
+        {q.skippable
+          ? <button className="ob-btn-back" style={{flex:1,color:'var(--ink-faint)',fontSize:'.72rem'}} onClick={handleSkip}>{q.skipLabel||"i'd rather not answer"}</button>
+          : null}
         <button className="ob-btn-primary" disabled={!canAdvanceQ()} onClick={goNext}>
           {qIdx < questions.length - 1 ? 'next →' : 'continue →'}
         </button>
@@ -559,7 +580,7 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   const [quizAnswers,setQuizAnswers]=useState({});
   const [error,setError]=useState('');const [loading,setLoading]=useState(false);
   // Steps 2–8: existing onboarding. Steps 9–12: quiz sections. Step 13: city. Step 14: review.
-  const TOTAL=13;
+  const TOTAL=14;
 
   function handlePhotoChange(e){const file=e.target.files[0];if(!file)return;setPhotoFile(file);const r=new FileReader();r.onload=ev=>setPhotoPreview(ev.target.result);r.readAsDataURL(file);}
 
@@ -567,7 +588,7 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
     if(step===2)return inviteCode.trim().length>=4;if(step===3)return true;if(step===4)return email.includes('@')&&password.length>=8;
     if(step===5)return name.trim().length>=2&&parseInt(age)>=18&&parseInt(age)<=99;
     if(step===6)return!!gender&&!!seeking&&parseInt(ageMin)>=18&&parseInt(ageMax)<=99&&parseInt(ageMin)<=parseInt(ageMax);
-    if(step===7)return bio.trim().length>=10;if(step===13)return!!city;return true;
+    if(step===7)return bio.trim().length>=10;if(step===14)return!!city;return true;
   }
 
   async function finish(){
@@ -628,14 +649,16 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   <label className="ob-label">Bio</label>
   <textarea className="ob-textarea" rows={6} placeholder="e.g. I've lived in four cities and I still can't decide if I'm a morning person. I make good coffee and bad decisions about books — I always start three at once. Looking for someone who takes things seriously without taking themselves too seriously." value={bio} onChange={e=>setBio(e.target.value)} maxLength={400} />
   <div className="char-count">{bio.length}/400</div>
-  <div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(6)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(9)}>continue →</button></div>
+  <div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(6)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(8)}>continue →</button></div>
 </div>}
-        {step===9&&<QuizSection section={QUIZ_SECTIONS[0]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(7)} onComplete={()=>setStep(10)} obStepLabel={`step 8 of ${TOTAL}`} />}
+        {step===8&&<div className="ob-step" key="s8"><div className="quiz-interstitial"><div className="quiz-interstitial-icon">✦</div><div className="quiz-interstitial-title">A few <em>questions</em> before we begin.</div><div className="quiz-interstitial-body"><p>You're about to answer a short personality quiz. Your answers shape who you see — and help others understand where you're compatible.</p><p>There are no right answers. Just be honest.</p></div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(7)}>←</button><button className="ob-btn-primary" onClick={()=>setStep(9)}>let's go →</button></div></div>}
+        {step===9&&<QuizSection section={QUIZ_SECTIONS[0]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(8)} onComplete={()=>setStep(10)} obStepLabel={`step 8 of ${TOTAL}`} />}
         {step===10&&<QuizSection section={QUIZ_SECTIONS[1]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(9)} onComplete={()=>setStep(11)} obStepLabel={`step 9 of ${TOTAL}`} />}
         {step===11&&<QuizSection section={QUIZ_SECTIONS[2]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(10)} onComplete={()=>setStep(12)} obStepLabel={`step 10 of ${TOTAL}`} />}
-        {step===12&&<QuizSection section={QUIZ_SECTIONS[3]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(11)} onComplete={()=>setStep(13)} obStepLabel={`step 11 of ${TOTAL}`} />}
-        {step===13&&<div className="ob-step" key="s13"><div className="ob-step-num">step 12 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(12)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(14)}>review →</button></div></div>}
-        {step===14&&<div className="ob-step" key="s14"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':seeking==='f'?'women':'anyone'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(13)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
+        {step===12&&<div className="ob-step" key="s12"><div className="quiz-interstitial"><div className="quiz-interstitial-icon">✦</div><div className="quiz-interstitial-title">One more <em>section.</em></div><div className="quiz-interstitial-body"><p>The next few questions are about sex and intimacy. They help match you with people who are on the same page.</p><p>You can skip any or all of them — just tap "I'd rather not answer" on each question. Your answers are never shown to other users.</p></div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(11)}>←</button><button className="ob-btn-primary" onClick={()=>setStep(13)}>continue →</button></div></div>}
+        {step===13&&<QuizSection section={QUIZ_SECTIONS[3]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(12)} onComplete={()=>setStep(14)} obStepLabel={`step 11 of ${TOTAL}`} />}
+        {step===14&&<div className="ob-step" key="s14"><div className="ob-step-num">step 12 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(13)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(15)}>review →</button></div></div>}
+        {step===15&&<div className="ob-step" key="s15"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':seeking==='f'?'women':'anyone'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(14)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
       </div>
     </div>
   );
@@ -824,7 +847,7 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
             ) : (
               <div className="date-prompt-actions">
                 <button className="btn-yes" disabled={dateResponding} onClick={() => respondDate(true)}>yes, we have a date ♥</button>
-                <button className="btn-no"  disabled={dateResponding} onClick={() => respondDate(false)}>not yet</button>
+                <button className="btn-no"  disabled={dateResponding} onClick={() => respondDate(false)}>I'm not feeling it</button>
               </div>
             )}
           </div>
@@ -839,7 +862,7 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
             ) : (
               <div className="date-prompt-actions">
                 <button className="btn-yes" disabled={dateResponding} onClick={() => respondDate(true)}>yes!</button>
-                <button className="btn-no"  disabled={dateResponding} onClick={() => respondDate(false)}>no</button>
+                <button className="btn-no"  disabled={dateResponding} onClick={() => respondDate(false)}>I'm not feeling it</button>
               </div>
             )}
           </div>
@@ -945,7 +968,7 @@ function MainApp({ user: initialUser, setUser }) {
   const [user,setLocalUser]=useState(initialUser);const [tab,setTab]=useState('discover');const [countdown,setCountdown]=useState(getTimeUntilNext2PM());
   const [profiles,setProfiles]=useState([]);const [chosenId,setChosenId]=useState(null);const [selected,setSelected]=useState(null);
   const [notifications,setNotifications]=useState([]);const [matches,setMatches]=useState([]);const [editOpen,setEditOpen]=useState(false);const [openChat,setOpenChat]=useState(null);
-  const [loadingDiscover,setLoadingDiscover]=useState(true);const [choosing,setChoosing]=useState(false);
+  const [loadingDiscover,setLoadingDiscover]=useState(true);const [choosing,setChoosing]=useState(false);const [overlayProfile,setOverlayProfile]=useState(null);
   const [chattedMatchIds,setChattedMatchIds]=useState(()=>new Set());
 
   function updateUser(u){setLocalUser(u);setUser(u);}
@@ -1001,7 +1024,24 @@ function MainApp({ user: initialUser, setUser }) {
               {loadingDiscover?<div className="empty-state"><div style={{fontFamily:"'Pixelify Sans',monospace",fontSize:'.7rem',color:'var(--ink-faint)'}}>loading...</div></div>
               :chosenId?<div className="already-chosen fade-in"><div className="big-icon">🍓</div><p>You chose <strong>{chosenProfile?.name||'someone'}</strong> today.<br/>They've been notified. Check back tomorrow.</p></div>
               :profiles.length===0?<div className="empty-state"><div className="icon">🔭</div><p>No profiles match your preferences in {user.city} right now. Try widening your age range.</p></div>
-              :<><div className="profiles-grid">{profiles.map(p=><div key={p.id} className={`profile-card ${selected?.id===p.id?'selected':''}`} onClick={()=>setSelected(p)}><div className="avatar-wrap">{p.photoUrl?<img className="avatar-img" src={photoUrl(p.photoUrl)} alt={p.name} />:<div className="avatar-placeholder">🌟</div>}</div><div className="profile-name">{p.name}</div><div className="profile-age">{p.age} · {p.city}</div><div className="profile-desc">{p.bio}</div><CompatTags compat={p.compat} /></div>)}</div><button className="choose-btn" disabled={!selected||choosing} onClick={handleChoose}>{choosing?'choosing...':selected?`choose ${selected.name} ♥`:'select someone'}</button></>}
+              :<>
+              {overlayProfile&&(
+                <div className="profile-overlay">
+                  <button className="overlay-back" onClick={()=>setOverlayProfile(null)}>← back to picks</button>
+                  <div className="overlay-body">
+                    <div className="overlay-avatar">{overlayProfile.photoUrl?<img className="avatar-img" src={photoUrl(overlayProfile.photoUrl)} alt={overlayProfile.name} />:<div className="avatar-placeholder">🌟</div>}</div>
+                    <div className="overlay-name">{overlayProfile.name}</div>
+                    <div className="overlay-age">{overlayProfile.age} · {overlayProfile.city}</div>
+                    <div className="overlay-rule"></div>
+                    <div className="overlay-bio">{overlayProfile.bio}</div>
+                    <div className="overlay-compat-tags"><CompatTags compat={overlayProfile.compat} /></div>
+                    <button className="overlay-choose" disabled={choosing} onClick={()=>{setSelected(overlayProfile);setOverlayProfile(null);}}>{`choose ${overlayProfile.name} ♥`}</button>
+                  </div>
+                </div>
+              )}
+              <div className="profiles-grid">{profiles.map(p=><div key={p.id} className={`profile-card ${selected?.id===p.id?'selected':''}`} onClick={()=>setOverlayProfile(p)}><div className="avatar-wrap">{p.photoUrl?<img className="avatar-img" src={photoUrl(p.photoUrl)} alt={p.name} />:<div className="avatar-placeholder">🌟</div>}</div><div className="profile-name">{p.name}</div><div className="profile-age">{p.age} · {p.city}</div><div className="profile-desc">{p.bio}</div><CompatTags compat={p.compat} /><div className="expand-hint">tap to expand</div></div>)}</div>
+              <button className="choose-btn" disabled={!selected||choosing} onClick={handleChoose}>{choosing?'choosing...':selected?`choose ${selected.name} ♥`:'select someone'}</button>
+              </>}
             </div>
           )}
           {tab==='notifications'&&(
