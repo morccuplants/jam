@@ -362,11 +362,29 @@ const STYLE = `
   .quiz-opt { background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:12px 14px; cursor:pointer; font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink); line-height:1.5; text-align:left; transition:border-color .1s,background .1s; }
   .quiz-opt:hover { border-color:var(--blue); background:#f5f7ff; }
   .quiz-opt.selected { border-color:var(--pink-dk); background:#fdf0f6; }
+  .quiz-opt:disabled { opacity:.4; cursor:not-allowed; }
   .quiz-skip { display:block; width:100%; background:transparent; border:none; padding:4px 0 10px; font-family:'Pixelify Sans',monospace; font-size:.72rem; color:var(--ink-faint); cursor:pointer; text-align:left; transition:color .1s; }
   .quiz-skip:hover { color:var(--pink-dk); }
   .quiz-q-nav { display:flex; gap:8px; padding-top:2px; }
   .quiz-q-counter { font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:10px; }
   .char-count { text-align:right; font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:1.2rem; }
+
+  .quiz-rank-list { display:flex; flex-direction:column; gap:6px; margin-bottom:1.2rem; }
+  .quiz-rank-item { display:flex; align-items:center; gap:10px; background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:11px 13px; }
+  .quiz-rank-num { font-family:'Pixelify Sans',monospace; font-size:.72rem; color:var(--pink-dk); min-width:18px; flex-shrink:0; }
+  .quiz-rank-label { font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink); flex:1; line-height:1.4; }
+  .quiz-rank-arrows { display:flex; flex-direction:column; gap:2px; flex-shrink:0; }
+  .quiz-rank-arrow { background:none; border:none; cursor:pointer; font-size:.72rem; color:var(--ink-faint); padding:2px 5px; border-radius:2px; line-height:1; transition:color .1s,background .1s; }
+  .quiz-rank-arrow:hover { color:var(--pink-dk); background:#fdf0f6; }
+  .quiz-rank-arrow:disabled { opacity:.22; cursor:default; }
+
+  .quiz-drugs-list { display:flex; flex-direction:column; gap:8px; margin-bottom:1.2rem; }
+  .quiz-drug-row { background:var(--white); border:2px solid var(--border); border-radius:var(--r); padding:10px 13px; }
+  .quiz-drug-name { font-family:'Pixelify Sans',monospace; font-size:.7rem; color:var(--ink-faint); margin-bottom:8px; letter-spacing:.05em; }
+  .quiz-drug-choices { display:flex; gap:5px; }
+  .quiz-drug-choice { flex:1; padding:8px 4px; background:var(--page); border:2px solid var(--border); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.62rem; color:var(--ink-light); cursor:pointer; text-align:center; line-height:1.3; transition:border-color .1s,background .1s; }
+  .quiz-drug-choice:hover { border-color:var(--blue); background:#f5f7ff; }
+  .quiz-drug-choice.selected { border-color:var(--pink-dk); background:#fdf0f6; color:var(--ink); }
 
   /* ── Compat tags ── */
   .compat-tags { display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:7px; }
@@ -513,6 +531,11 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
     if (q.skippable) return true;
     if (q.type === 'mc_single') return val !== undefined && val !== null;
     if (q.type === 'mc_multi') return Array.isArray(val) && val.length >= 1;
+    if (q.type === 'mc_rank') return true;
+    if (q.type === 'mc_drugs') {
+      if (!val || typeof val !== 'object') return false;
+      return q.drugs.every(d => val[d] !== undefined);
+    }
     return true;
   }
 
@@ -523,6 +546,19 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
     const next = prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx];
     if (q.max && next.length > q.max) return;
     onChange(q.id, next);
+  }
+
+  function handleRankMove(idx, dir) {
+    const ranked = Array.isArray(val) && val.length ? [...val] : q.options.map((_, i) => i);
+    const target = idx + dir;
+    if (target < 0 || target >= ranked.length) return;
+    [ranked[idx], ranked[target]] = [ranked[target], ranked[idx]];
+    onChange(q.id, ranked);
+  }
+
+  function handleDrug(drug, comfort) {
+    const prev = (val && typeof val === 'object') ? val : {};
+    onChange(q.id, { ...prev, [drug]: comfort });
   }
 
   function handleSkip() { onChange(q.id, null); goNext(); }
@@ -539,6 +575,10 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
 
   const isMulti = q.type === 'mc_multi';
   const selectedArr = Array.isArray(val) ? val : [];
+  const rankedIndices = (q.type === 'mc_rank')
+    ? (Array.isArray(val) && val.length ? val : q.options.map((_, i) => i))
+    : [];
+  const drugVal = (q.type === 'mc_drugs' && val && typeof val === 'object') ? val : {};
 
   return (
     <div className="ob-step" key={`${section.id}-${qIdx}`}>
@@ -547,18 +587,63 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
       <div className="quiz-q-counter">{qIdx + 1} / {questions.length}</div>
       <div className="quiz-q-title" dangerouslySetInnerHTML={{ __html: q.title }} />
       {q.sub && <div className="quiz-q-sub">{q.sub}</div>}
-      <div className="quiz-opts">
-        {q.options.map((opt, i) => {
-          const sel = isMulti ? selectedArr.includes(i) : val === i;
-          return (
-            <button
-              key={i}
-              className={`quiz-opt${sel ? ' selected' : ''}`}
-              onClick={() => isMulti ? handleMulti(i) : handleSingle(i)}
-            >{opt}</button>
-          );
-        })}
-      </div>
+
+      {/* mc_single and mc_multi */}
+      {(q.type === 'mc_single' || q.type === 'mc_multi') && (
+        <div className="quiz-opts">
+          {q.options.map((opt, i) => {
+            const sel = isMulti ? selectedArr.includes(i) : val === i;
+            const atMax = isMulti && q.max && selectedArr.length >= q.max && !sel;
+            return (
+              <button
+                key={i}
+                className={`quiz-opt${sel ? ' selected' : ''}`}
+                disabled={atMax}
+                onClick={() => isMulti ? handleMulti(i) : handleSingle(i)}
+              >{opt}</button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* mc_rank */}
+      {q.type === 'mc_rank' && (
+        <div className="quiz-rank-list">
+          {rankedIndices.map((optIdx, rankPos) => (
+            <div key={optIdx} className="quiz-rank-item">
+              <span className="quiz-rank-num">{rankPos + 1}</span>
+              <span className="quiz-rank-label">{q.options[optIdx]}</span>
+              <span className="quiz-rank-arrows">
+                <button className="quiz-rank-arrow" disabled={rankPos === 0} onClick={() => handleRankMove(rankPos, -1)}>▲</button>
+                <button className="quiz-rank-arrow" disabled={rankPos === rankedIndices.length - 1} onClick={() => handleRankMove(rankPos, 1)}>▼</button>
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* mc_drugs */}
+      {q.type === 'mc_drugs' && (
+        <div className="quiz-drugs-list">
+          {q.drugs.map(drug => (
+            <div key={drug} className="quiz-drug-row">
+              <div className="quiz-drug-name">{drug.toUpperCase()}</div>
+              <div className="quiz-drug-choices">
+                {['never', 'occasionally', 'always'].map(level => (
+                  <button
+                    key={level}
+                    className={`quiz-drug-choice${drugVal[drug] === level ? ' selected' : ''}`}
+                    onClick={() => handleDrug(drug, level)}
+                  >
+                    {level === 'never' ? 'never okay' : level === 'occasionally' ? 'okay occasionally' : 'always okay'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="quiz-q-nav">
         <button className="ob-btn-back" onClick={goBack}>←</button>
         {q.skippable
