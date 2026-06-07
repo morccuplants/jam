@@ -357,8 +357,8 @@ const STYLE = `
   .quiz-interstitial-body { font-family:'EB Garamond',serif; font-size:1.05rem; color:var(--ink-light); line-height:1.8; margin-bottom:28px; }
   .quiz-q-title { font-family:'EB Garamond',serif; font-size:1.45rem; font-weight:400; line-height:1.25; margin-bottom:5px; color:var(--ink); }
   .quiz-q-title em { font-style:italic; color:var(--pink-dk); }
-  .quiz-q-sub { font-size:.92rem; color:var(--ink-faint); font-style:italic; margin-bottom:1.1rem; line-height:1.55; }
-  .quiz-opts { display:flex; flex-direction:column; gap:7px; margin-bottom:1.2rem; }
+  .quiz-q-sub { font-size:.92rem; color:var(--ink-faint); font-style:italic; margin-bottom:1.4rem; line-height:1.55; }
+  .quiz-opts { display:flex; flex-direction:column; gap:9px; margin-top:1rem; margin-bottom:1.4rem; }
   .quiz-opt { background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:12px 14px; cursor:pointer; font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink); line-height:1.5; text-align:left; transition:border-color .1s,background .1s; }
   .quiz-opt:hover { border-color:var(--blue); background:#f5f7ff; }
   .quiz-opt.selected { border-color:var(--pink-dk); background:#fdf0f6; }
@@ -369,7 +369,7 @@ const STYLE = `
   .quiz-q-counter { font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:10px; }
   .char-count { text-align:right; font-family:monospace; font-size:.72rem; color:var(--ink-faint); margin-bottom:1.2rem; }
 
-  .quiz-rank-list { display:flex; flex-direction:column; gap:6px; margin-bottom:1.2rem; }
+  .quiz-rank-list { display:flex; flex-direction:column; gap:6px; margin-top:1rem; margin-bottom:1.4rem; }
   .quiz-rank-item { display:flex; align-items:center; gap:10px; background:var(--white); border:2px solid var(--border-dk); border-radius:var(--r); padding:11px 13px; }
   .quiz-rank-num { font-family:'Pixelify Sans',monospace; font-size:.72rem; color:var(--pink-dk); min-width:18px; flex-shrink:0; }
   .quiz-rank-label { font-family:'EB Garamond',serif; font-size:1rem; color:var(--ink); flex:1; line-height:1.4; }
@@ -378,7 +378,7 @@ const STYLE = `
   .quiz-rank-arrow:hover { color:var(--pink-dk); background:#fdf0f6; }
   .quiz-rank-arrow:disabled { opacity:.22; cursor:default; }
 
-  .quiz-drugs-list { display:flex; flex-direction:column; gap:8px; margin-bottom:1.2rem; }
+  .quiz-drugs-list { display:flex; flex-direction:column; gap:8px; margin-top:1rem; margin-bottom:1.4rem; }
   .quiz-drug-row { background:var(--white); border:2px solid var(--border); border-radius:var(--r); padding:10px 13px; }
   .quiz-drug-name { font-family:'Pixelify Sans',monospace; font-size:.7rem; color:var(--ink-faint); margin-bottom:8px; letter-spacing:.05em; }
   .quiz-drug-choices { display:flex; gap:5px; }
@@ -534,7 +534,7 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
     if (q.type === 'mc_rank') return true;
     if (q.type === 'mc_drugs') {
       if (!val || typeof val !== 'object') return false;
-      return q.drugs.every(d => val[d] !== undefined);
+      return q.drugs.every(d => ['never','sometimes','frequent','always'].includes(val[d]));
     }
     return true;
   }
@@ -581,7 +581,7 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
   const drugVal = (q.type === 'mc_drugs' && val && typeof val === 'object') ? val : {};
 
   return (
-    <div className="ob-step" key={`${section.id}-${qIdx}`}>
+    <div className="ob-step">
       <div className="ob-step-num">{obStepLabel}</div>
       <div className="quiz-section-label">{section.label}</div>
       <div className="quiz-q-counter">{qIdx + 1} / {questions.length}</div>
@@ -629,13 +629,13 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
             <div key={drug} className="quiz-drug-row">
               <div className="quiz-drug-name">{drug.toUpperCase()}</div>
               <div className="quiz-drug-choices">
-                {['never', 'occasionally', 'always'].map(level => (
+                {['never', 'sometimes', 'frequent', 'always'].map(level => (
                   <button
                     key={level}
                     className={`quiz-drug-choice${drugVal[drug] === level ? ' selected' : ''}`}
                     onClick={() => handleDrug(drug, level)}
                   >
-                    {level === 'never' ? 'never okay' : level === 'occasionally' ? 'okay occasionally' : 'always okay'}
+                    {level === 'never' ? 'never okay' : level === 'sometimes' ? 'okay once in a while' : level === 'frequent' ? 'okay w/ frequent use' : 'always okay'}
                   </button>
                 ))}
               </div>
@@ -646,7 +646,7 @@ function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLab
 
       <div className="quiz-q-nav">
         <button className="ob-btn-back" onClick={goBack}>←</button>
-        {q.skippable
+        {q.skippable && q.type !== 'mc_drugs'
           ? <button className="ob-btn-back" style={{flex:1,color:'var(--ink-faint)',fontSize:'.72rem'}} onClick={handleSkip}>{q.skipLabel||"i'd rather not answer"}</button>
           : null}
         <button className="ob-btn-primary" disabled={!canAdvanceQ()} onClick={goNext}>
