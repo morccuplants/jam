@@ -521,9 +521,9 @@ function CompatTags({ compat }) {
   );
 }
 
-function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLabel }) {
-  const [qIdx, setQIdx] = useState(0);
+function QuizSection({ section, answers, onChange, onBack, onComplete, obStepLabel, initialQIdx }) {
   const questions = section.questionIds.map(id => QUIZ_QUESTIONS.find(q => q.id === id));
+  const [qIdx, setQIdx] = useState(initialQIdx !== undefined ? initialQIdx : 0);
   const q = questions[qIdx];
   const val = answers[q.id];
 
@@ -662,7 +662,10 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [name,setName]=useState('');const [age,setAge]=useState('');
   const [gender,setGender]=useState('');const [seeking,setSeeking]=useState('');const [ageMin,setAgeMin]=useState('22');const [ageMax,setAgeMax]=useState('35');
   const [bio,setBio]=useState('');const [city,setCity]=useState('');
+  const [quizFromBack, setQuizFromBack] = useState(false);
   const [quizAnswers,setQuizAnswers]=useState({});
+
+  function goToStep(n, back=false) { setQuizFromBack(back); setStep(n); }
   const [error,setError]=useState('');const [loading,setLoading]=useState(false);
   // Steps 2–8: existing onboarding. Steps 9–12: quiz sections. Step 13: city. Step 14: review.
   const TOTAL=14;
@@ -736,13 +739,13 @@ function Onboarding({ onComplete, onSwitchToLogin }) {
   <div className="char-count">{bio.length}/400</div>
   <div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(6)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(8)}>continue →</button></div>
 </div>}
-        {step===8&&<div className="ob-step" key="s8"><div className="quiz-interstitial"><div className="quiz-interstitial-icon">✦</div><div className="quiz-interstitial-title">A few <em>questions</em> before we begin.</div><div className="quiz-interstitial-body"><p>You're about to answer a short personality quiz. Your answers shape who you see — and help others understand where you're compatible.</p><p>There are no right answers. Just be honest.</p></div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(7)}>←</button><button className="ob-btn-primary" onClick={()=>setStep(9)}>let's go →</button></div></div>}
-        {step===9&&<QuizSection key="qs-0" section={QUIZ_SECTIONS[0]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(8)} onComplete={()=>setStep(10)} obStepLabel={`step 8 of ${TOTAL}`} />}
-        {step===10&&<QuizSection key="qs-1" section={QUIZ_SECTIONS[1]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(9)} onComplete={()=>setStep(11)} obStepLabel={`step 9 of ${TOTAL}`} />}
-        {step===11&&<QuizSection key="qs-2" section={QUIZ_SECTIONS[2]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(10)} onComplete={()=>setStep(12)} obStepLabel={`step 10 of ${TOTAL}`} />}
-        {step===12&&<div className="ob-step" key="s12"><div className="quiz-interstitial"><div className="quiz-interstitial-icon">✦</div><div className="quiz-interstitial-title">One more <em>section.</em></div><div className="quiz-interstitial-body"><p>The next few questions are about sex and intimacy. They help match you with people who are on the same page.</p><p>You can skip any or all of them — just tap "I'd rather not answer" on each question. Your answers are never shown to other users.</p></div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(11)}>←</button><button className="ob-btn-primary" onClick={()=>setStep(13)}>continue →</button></div></div>}
-        {step===13&&<QuizSection key="qs-3" section={QUIZ_SECTIONS[3]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>setStep(12)} onComplete={()=>setStep(14)} obStepLabel={`step 11 of ${TOTAL}`} />}
-        {step===14&&<div className="ob-step" key="s14"><div className="ob-step-num">step 12 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(13)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(15)}>review →</button></div></div>}
+        {step===8&&<div className="ob-step" key="s8"><div className="quiz-interstitial"><div className="quiz-interstitial-icon">✦</div><div className="quiz-interstitial-title">A few <em>questions</em> before we begin.</div><div className="quiz-interstitial-body"><p>You're about to answer a short personality quiz. Your answers shape who you see — and help others understand where you're compatible.</p><p>There are no right answers. Just be honest.</p></div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(7)}>←</button><button className="ob-btn-primary" onClick={()=>goToStep(9,false)}>let's go →</button></div></div>}
+        {step===9&&<QuizSection key={`qs-0-${quizFromBack}`} section={QUIZ_SECTIONS[0]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>goToStep(8,false)} onComplete={()=>goToStep(10,false)} obStepLabel={`step 8 of ${TOTAL}`} initialQIdx={quizFromBack ? QUIZ_SECTIONS[0].questionIds.length-1 : 0} />}
+        {step===10&&<QuizSection key={`qs-1-${quizFromBack}`} section={QUIZ_SECTIONS[1]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>goToStep(9,true)} onComplete={()=>goToStep(11,false)} obStepLabel={`step 9 of ${TOTAL}`} initialQIdx={quizFromBack ? QUIZ_SECTIONS[1].questionIds.length-1 : 0} />}
+        {step===11&&<QuizSection key={`qs-2-${quizFromBack}`} section={QUIZ_SECTIONS[2]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>goToStep(10,true)} onComplete={()=>goToStep(12,false)} obStepLabel={`step 10 of ${TOTAL}`} initialQIdx={quizFromBack ? QUIZ_SECTIONS[2].questionIds.length-1 : 0} />}
+        {step===12&&<div className="ob-step" key="s12"><div className="quiz-interstitial"><div className="quiz-interstitial-icon">✦</div><div className="quiz-interstitial-title">One more <em>section.</em></div><div className="quiz-interstitial-body"><p>The next few questions are about sex and intimacy. They help match you with people who are on the same page.</p><p>You can skip any or all of them — just tap "I'd rather not answer" on each question. Your answers are never shown to other users.</p></div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>goToStep(11,true)}>←</button><button className="ob-btn-primary" onClick={()=>goToStep(13,false)}>continue →</button></div></div>}
+        {step===13&&<QuizSection key={`qs-3-${quizFromBack}`} section={QUIZ_SECTIONS[3]} answers={quizAnswers} onChange={setQuizAnswer} onBack={()=>goToStep(12,false)} onComplete={()=>goToStep(14,false)} obStepLabel={`step 11 of ${TOTAL}`} initialQIdx={quizFromBack ? QUIZ_SECTIONS[3].questionIds.length-1 : 0} />}
+        {step===14&&<div className="ob-step" key="s14"><div className="ob-step-num">step 12 of {TOTAL}</div><div className="ob-step-title">Where do you <em>roam?</em></div><div className="ob-step-sub">You'll be matched with people in the same city.</div><CityPicker value={city} onChange={setCity} /><div className="ob-nav"><button className="ob-btn-back" onClick={()=>goToStep(13,true)}>←</button><button className="ob-btn-primary" disabled={!canAdvance()} onClick={()=>setStep(15)}>review →</button></div></div>}
         {step===15&&<div className="ob-step" key="s15"><div className="ob-step-num">almost there</div><div className="ob-step-title">Looking <em>good,</em> {name}</div><div className="ob-step-sub">Here's how others will see you. Editable any time.</div>{error&&<div className="error-msg">{error}</div>}<div className="review-card">{photoPreview?<div className="review-avatar"><img src={photoPreview} alt="you" /></div>:<div className="review-avatar-placeholder">🍓</div>}<div className="review-name">{name}</div><div className="review-meta">{age} · {city} · {gender==='m'?'man':'woman'} · seeking {seeking==='m'?'men':seeking==='f'?'women':'anyone'} {ageMin}–{ageMax}</div><div className="review-desc">{bio}</div></div><div className="ob-nav"><button className="ob-btn-back" onClick={()=>setStep(14)}>←</button><button className="ob-btn-primary" disabled={loading} onClick={finish}>{loading?'creating...':'enter ♥'}</button></div></div>}
       </div>
     </div>
