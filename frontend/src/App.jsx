@@ -400,7 +400,6 @@ const STYLE = `
 
 const CITIES = [
   { name:"New York",    vibe:"The city that never sleeps" },
-  { name:"New York",    vibe:"The city that never sleeps" },
 ];
 
 

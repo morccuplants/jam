@@ -243,7 +243,7 @@ export const QUIZ_QUESTIONS = [
     category: 'sex',
     type: 'mc_single',
     skippable: true,
-    title: 'How soon do you want sex?',
+    title: 'How soon would you like to have sex with a new partner?',
     options: [
       "as soon as possible, if there's chemistry",
       'a few weeks in',
