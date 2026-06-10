@@ -220,6 +220,7 @@ export const QUIZ_QUESTIONS = [
       'cats',
       'dogs',
       'anything',
+      'none',
     ],
   },
   {
