@@ -348,6 +348,28 @@ const STYLE = `
   .unmatch-btn { width:100%; margin-top:6px; padding:9px; background:transparent; color:var(--ink-faint); border:2px solid var(--border); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.75rem; cursor:pointer; transition:color .12s,border-color .12s; }
   .unmatch-btn:hover { color:#c03030; border-color:#e0b0b0; background:#fdf0f0; }
 
+  /* ── Chosen popup ── */
+  @keyframes popIn { from { opacity:0; transform:scale(.94) translateY(18px); } to { opacity:1; transform:scale(1) translateY(0); } }
+  .chosen-popup-backdrop { position:fixed; inset:0; z-index:300; background:rgba(28,28,46,.72); display:flex; align-items:flex-end; justify-content:center; animation:fadeInUp .2s ease forwards; }
+  .chosen-popup { background:var(--cream); max-width:480px; width:100%; border-top:4px solid var(--pink-dk); border-left:2px solid var(--border-dk); border-right:2px solid var(--border-dk); border-radius:var(--r) var(--r) 0 0; padding:36px 28px 44px; display:flex; flex-direction:column; align-items:center; text-align:center; animation:popIn .32s cubic-bezier(.22,1,.36,1) forwards; max-height:88vh; overflow-y:auto; }
+  .chosen-popup-hearts { font-size:2rem; letter-spacing:.2em; margin-bottom:20px; }
+  .chosen-popup-label { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--pink-dk); letter-spacing:.12em; margin-bottom:10px; }
+  .chosen-popup-title { font-family:'EB Garamond',serif; font-size:2.2rem; font-weight:400; line-height:1.15; color:var(--ink); margin-bottom:24px; }
+  .chosen-popup-title em { font-style:italic; color:var(--pink-dk); }
+  .chosen-popup-avatar { width:110px; height:110px; border-radius:50%; overflow:hidden; border:3px solid var(--pink-dk); margin-bottom:18px; display:flex; align-items:center; justify-content:center; font-size:2.2rem; background:var(--page); flex-shrink:0; }
+  .chosen-popup-avatar img { width:100%; height:100%; object-fit:cover; }
+  .chosen-popup-name { font-family:'EB Garamond',serif; font-size:1.6rem; font-weight:400; margin-bottom:4px; }
+  .chosen-popup-age { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--ink-faint); margin-bottom:18px; }
+  .chosen-popup-rule { width:36px; height:2px; background:var(--border-dk); margin:0 auto 18px; }
+  .chosen-popup-bio { font-family:'EB Garamond',serif; font-size:1.05rem; color:var(--ink-light); line-height:1.8; margin-bottom:28px; max-width:320px; }
+  .chosen-popup-btn { width:100%; padding:15px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.75rem; cursor:pointer; transition:background .12s; }
+  .chosen-popup-btn:hover { background:var(--pink-dk); color:var(--white); }
+
+  /* ── Notif bio expand ── */
+  .notif-bio { font-family:'EB Garamond',serif; font-size:.95rem; color:var(--ink-light); line-height:1.7; margin-top:7px; padding-top:7px; border-top:1px solid var(--border); }
+  .notif-bio-toggle { background:none; border:none; font-family:'Pixelify Sans',monospace; font-size:.72rem; color:var(--ink-faint); cursor:pointer; padding:0; margin-top:5px; }
+  .notif-bio-toggle:hover { color:var(--pink-dk); }
+
   /* ── Quiz ── */
   .quiz-section-label { font-family:'Pixelify Sans',monospace; font-size:.95rem; letter-spacing:.08em; color:var(--pink-dk); text-transform:uppercase; margin-bottom:10px; }
   .quiz-interstitial { flex:1; display:flex; flex-direction:column; justify-content:center; animation:fadeInUp .3s ease forwards; }
@@ -1048,17 +1070,67 @@ function HoldingScreen({ user }) {
   );
 }
 
+function NotifCard({ n, onMatch, onPass }) {
+  const [bioOpen, setBioOpen] = useState(false);
+  return (
+    <div className={`notif-card ${n.pending?'new':''}`}>
+      {n.pending&&<div className="notif-new-label">new</div>}
+      <div className="notif-avatar">{n.from.photoUrl?<img src={photoUrl(n.from.photoUrl)} alt={n.from.name} />:'🌟'}</div>
+      <div className="notif-body">
+        <div className="notif-text"><strong>{n.from.name}</strong> chose you today.{n.matched&&' You matched! 🎉'}{n.passed&&' You passed.'}</div>
+        {n.pending&&<div className="notif-actions"><button className="btn-match" onClick={()=>onMatch(n.from.id)}>match ♥</button><button className="btn-pass" onClick={()=>onPass(n.from.id)}>pass</button></div>}
+        {n.from.bio&&<button className="notif-bio-toggle" onClick={()=>setBioOpen(o=>!o)}>{bioOpen?'hide bio ▲':'read bio ▼'}</button>}
+        {bioOpen&&n.from.bio&&<div className="notif-bio">{n.from.bio}</div>}
+        <div className="notif-time">{n.time}</div>
+      </div>
+    </div>
+  );
+}
+
+function ChosenPopup({ notification, onDismiss }) {
+  const { from } = notification;
+  return (
+    <div className="chosen-popup-backdrop" onClick={onDismiss}>
+      <div className="chosen-popup" onClick={e=>e.stopPropagation()}>
+        <div className="chosen-popup-hearts">🍓 ♥ 🍓</div>
+        <div className="chosen-popup-label">✦ you were chosen ✦</div>
+        <div className="chosen-popup-title"><em>{from.name}</em> chose you.</div>
+        <div className="chosen-popup-avatar">
+          {from.photoUrl ? <img src={photoUrl(from.photoUrl)} alt={from.name} /> : '🌟'}
+        </div>
+        <div className="chosen-popup-name">{from.name}</div>
+        {from.age && <div className="chosen-popup-age">{from.age}{from.city ? ` · ${from.city}` : ''}</div>}
+        {from.bio && <><div className="chosen-popup-rule" /><div className="chosen-popup-bio">{from.bio}</div></>}
+        <button className="chosen-popup-btn" onClick={onDismiss}>see who chose you →</button>
+      </div>
+    </div>
+  );
+}
+
 function MainApp({ user: initialUser, setUser }) {
   const [user,setLocalUser]=useState(initialUser);const [tab,setTab]=useState('discover');const [countdown,setCountdown]=useState(getTimeUntilNext2PM());
   const [profiles,setProfiles]=useState([]);const [chosenId,setChosenId]=useState(null);const [selected,setSelected]=useState(null);
   const [notifications,setNotifications]=useState([]);const [matches,setMatches]=useState([]);const [editOpen,setEditOpen]=useState(false);const [openChat,setOpenChat]=useState(null);
   const [loadingDiscover,setLoadingDiscover]=useState(true);const [choosing,setChoosing]=useState(false);const [overlayProfile,setOverlayProfile]=useState(null);
   const [chattedMatchIds,setChattedMatchIds]=useState(()=>new Set());
+  const [chosenPopup,setChosenPopup]=useState(null);
+  const seenChosenIds=useRef(new Set(JSON.parse(localStorage.getItem('bmj_seen_chosen')||'[]')));
 
   function updateUser(u){setLocalUser(u);setUser(u);}
 
   const loadDiscover=useCallback(async()=>{setLoadingDiscover(true);try{const data=await apiGetDiscover();setProfiles(data.profiles||[]);setChosenId(data.chosenId||null);}catch(err){console.error(err);}finally{setLoadingDiscover(false);}}, []);
-  const loadNotifications=useCallback(async()=>{try{setNotifications(await apiGetNotifications());}catch{}}, []);
+  const loadNotifications=useCallback(async()=>{
+    try {
+      const notifs = await apiGetNotifications();
+      setNotifications(notifs);
+      const unseen = notifs.find(n => n.pending && !seenChosenIds.current.has(n.id));
+      if (unseen) {
+        setChosenPopup(unseen);
+        seenChosenIds.current.add(unseen.id);
+        localStorage.setItem('bmj_seen_chosen', JSON.stringify([...seenChosenIds.current]));
+      }
+    } catch {}
+  }, []);
   const loadMatches=useCallback(async()=>{try{setMatches(await apiGetMatches());}catch{}}, []);
 
   useEffect(()=>{loadDiscover();loadNotifications();loadMatches();setTimeout(()=>requestPushPermission(),3000);},[]);
@@ -1088,6 +1160,7 @@ function MainApp({ user: initialUser, setUser }) {
       <div className="app">
         {editOpen&&<EditProfilePanel user={user} onSave={u=>{updateUser(u);setEditOpen(false);}} onClose={()=>setEditOpen(false)} />}
         {openChat&&<ChatPanel match={openChat} user={user} onClose={()=>setOpenChat(null)} onUnmatch={id=>{setMatches(prev=>prev.filter(m=>m.id!==id));setOpenChat(null);}} />}
+        {chosenPopup&&<ChosenPopup notification={chosenPopup} onDismiss={()=>{setChosenPopup(null);setTab('notifications');}} />}
         <div className="header">
           <div className="header-band">
             <div><div className="logo">be my jam</div><span className="logo-sub">♥ {user.city} ♥</span></div>
@@ -1135,15 +1208,7 @@ function MainApp({ user: initialUser, setUser }) {
               <div className="notif-list">
                 {visibleNotifications.length===0&&<div className="empty-state"><div className="icon">💌</div><p>No one has chosen you yet.</p></div>}
                 {visibleNotifications.map(n=>(
-                  <div key={n.id} className={`notif-card ${n.pending?'new':''}`}>
-                    {n.pending&&<div className="notif-new-label">new</div>}
-                    <div className="notif-avatar">{n.from.photoUrl?<img src={photoUrl(n.from.photoUrl)} alt={n.from.name} />:'🌟'}</div>
-                    <div className="notif-body">
-                      <div className="notif-text"><strong>{n.from.name}</strong> chose you today.{n.matched&&' You matched! 🎉'}{n.passed&&' You passed.'}</div>
-                      {n.pending&&<div className="notif-actions"><button className="btn-match" onClick={()=>handleMatch(n.from.id)}>match ♥</button><button className="btn-pass" onClick={()=>handlePass(n.from.id)}>pass</button></div>}
-                      <div className="notif-time">{n.time}</div>
-                    </div>
-                  </div>
+                  <NotifCard key={n.id} n={n} onMatch={handleMatch} onPass={handlePass} />
                 ))}
               </div>
             </div>
