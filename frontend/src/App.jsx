@@ -174,6 +174,8 @@ const STYLE = `
   .overlay-back:hover { color:var(--pink-dk); }
   .overlay-body { flex:1; padding:32px 28px 24px; display:flex; flex-direction:column; align-items:center; text-align:center; overflow-y:auto; }
   .overlay-avatar { margin-bottom:20px; }
+  .overlay-avatar .avatar-img { width:160px; height:160px; border-radius:50%; object-fit:cover; border:3px solid var(--border-dk); }
+  .overlay-avatar .avatar-placeholder { width:160px; height:160px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:3rem; background:var(--page); border:3px solid var(--border-dk); }
   .overlay-name { font-family:'EB Garamond',serif; font-size:2rem; font-weight:500; margin-bottom:4px; }
   .overlay-age { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--ink-faint); margin-bottom:20px; }
   .overlay-rule { width:40px; height:2px; background:var(--border-dk); margin:0 auto 20px; }
@@ -348,7 +350,17 @@ const STYLE = `
   .unmatch-btn { width:100%; margin-top:6px; padding:9px; background:transparent; color:var(--ink-faint); border:2px solid var(--border); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.75rem; cursor:pointer; transition:color .12s,border-color .12s; }
   .unmatch-btn:hover { color:#c03030; border-color:#e0b0b0; background:#fdf0f0; }
 
-  /* ── Chosen popup ── */
+  /* ── 2pm arrival popup ── */
+  @keyframes floatUp { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .arrival-backdrop { position:fixed; inset:0; z-index:300; background:var(--ink); display:flex; align-items:center; justify-content:center; animation:fadeInUp .3s ease forwards; }
+  .arrival-popup { display:flex; flex-direction:column; align-items:center; text-align:center; padding:0 36px; max-width:380px; }
+  .arrival-icon { font-size:3.2rem; margin-bottom:24px; animation:floatUp 2.4s ease-in-out infinite; }
+  .arrival-label { font-family:'Pixelify Sans',monospace; font-size:.75rem; color:var(--pink); letter-spacing:.14em; margin-bottom:12px; }
+  .arrival-title { font-family:'EB Garamond',serif; font-size:2.6rem; font-weight:400; line-height:1.15; color:var(--cream); margin-bottom:14px; }
+  .arrival-title em { font-style:italic; color:var(--pink); }
+  .arrival-sub { font-family:'EB Garamond',serif; font-size:1.05rem; color:var(--ink-faint); line-height:1.75; margin-bottom:36px; }
+  .arrival-btn { padding:16px 40px; background:var(--pink); color:var(--ink); border:2px solid var(--pink-dk); border-radius:var(--r); font-family:'Pixelify Sans',monospace; font-size:.8rem; cursor:pointer; transition:background .12s; }
+  .arrival-btn:hover { background:var(--pink-dk); color:var(--white); }
   @keyframes popIn { from { opacity:0; transform:scale(.94) translateY(18px); } to { opacity:1; transform:scale(1) translateY(0); } }
   .chosen-popup-backdrop { position:fixed; inset:0; z-index:300; background:rgba(28,28,46,.72); display:flex; align-items:flex-end; justify-content:center; animation:fadeInUp .2s ease forwards; }
   .chosen-popup { background:var(--cream); max-width:480px; width:100%; border-top:4px solid var(--pink-dk); border-left:2px solid var(--border-dk); border-right:2px solid var(--border-dk); border-radius:var(--r) var(--r) 0 0; padding:36px 28px 44px; display:flex; flex-direction:column; align-items:center; text-align:center; animation:popIn .32s cubic-bezier(.22,1,.36,1) forwards; max-height:88vh; overflow-y:auto; }
@@ -412,12 +424,12 @@ const STYLE = `
   .compat-tags { display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:7px; }
   .compat-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:999px; font-family:'Pixelify Sans',monospace; font-size:.69rem; border:1px solid; }
   .compat-tag-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-  .compat-high { background:#fdf0f6; color:#72243E; border-color:#c87090; }
-  .compat-high .compat-tag-dot { background:#c87090; }
-  .compat-med  { background:#fdf6e8; color:#633806; border-color:#e8a030; }
-  .compat-med  .compat-tag-dot { background:#e8a030; }
-  .compat-low  { background:#f4f3f1; color:#555553; border-color:#aaa9a5; }
-  .compat-low  .compat-tag-dot { background:#aaa9a5; }
+  .compat-high { background:#edf7ed; color:#1a5c1a; border-color:#4caf50; }
+  .compat-high .compat-tag-dot { background:#4caf50; }
+  .compat-med  { background:#fdf8e1; color:#6b5000; border-color:#f5c800; }
+  .compat-med  .compat-tag-dot { background:#f5c800; }
+  .compat-low  { background:#fdf0f0; color:#7a1c1c; border-color:#e53935; }
+  .compat-low  .compat-tag-dot { background:#e53935; }
 `;
 
 const CITIES = [
@@ -1070,6 +1082,20 @@ function HoldingScreen({ user }) {
   );
 }
 
+function ArrivalPopup({ onDismiss }) {
+  return (
+    <div className="arrival-backdrop">
+      <div className="arrival-popup">
+        <div className="arrival-icon">🍓</div>
+        <div className="arrival-label">✦ 2pm ✦</div>
+        <div className="arrival-title">today's four<br/><em>have arrived.</em></div>
+        <div className="arrival-sub">Four new people are waiting.<br/>Choose one. They'll be notified.</div>
+        <button className="arrival-btn" onClick={onDismiss}>see today's picks →</button>
+      </div>
+    </div>
+  );
+}
+
 function NotifCard({ n, onMatch, onPass }) {
   const [bioOpen, setBioOpen] = useState(false);
   return (
@@ -1114,7 +1140,9 @@ function MainApp({ user: initialUser, setUser }) {
   const [loadingDiscover,setLoadingDiscover]=useState(true);const [choosing,setChoosing]=useState(false);const [overlayProfile,setOverlayProfile]=useState(null);
   const [chattedMatchIds,setChattedMatchIds]=useState(()=>new Set());
   const [chosenPopup,setChosenPopup]=useState(null);
+  const [arrivalPopup,setArrivalPopup]=useState(false);
   const seenChosenIds=useRef(new Set(JSON.parse(localStorage.getItem('bmj_seen_chosen')||'[]')));
+  const prevCountdown=useRef(null);
 
   function updateUser(u){setLocalUser(u);setUser(u);}
 
@@ -1135,7 +1163,22 @@ function MainApp({ user: initialUser, setUser }) {
 
   useEffect(()=>{loadDiscover();loadNotifications();loadMatches();setTimeout(()=>requestPushPermission(),3000);},[]);
   useEffect(()=>{const t=setInterval(()=>{loadNotifications();loadMatches();},30000);return()=>clearInterval(t);},[]);
-  useEffect(()=>{const t=setInterval(()=>setCountdown(getTimeUntilNext2PM()),1000);return()=>clearInterval(t);},[]);
+  useEffect(()=>{
+    const t=setInterval(()=>{
+      const next=getTimeUntilNext2PM();
+      if(prevCountdown.current){
+        const wasNearZero=prevCountdown.current<'00:01:00';
+        const nowReset=next>'20:00:00';
+        if(wasNearZero&&nowReset){
+          setArrivalPopup(true);
+          loadDiscover();
+        }
+      }
+      prevCountdown.current=next;
+      setCountdown(next);
+    },1000);
+    return()=>clearInterval(t);
+  },[]);
 
   async function handleChoose(){if(!selected||choosing)return;setChoosing(true);try{const{matched}=await apiChoose(selected.id);setChosenId(selected.id);if(matched)await loadMatches();}catch(err){alert(err.message);}finally{setChoosing(false);}}
   async function handleMatch(id) {
@@ -1161,6 +1204,7 @@ function MainApp({ user: initialUser, setUser }) {
         {editOpen&&<EditProfilePanel user={user} onSave={u=>{updateUser(u);setEditOpen(false);}} onClose={()=>setEditOpen(false)} />}
         {openChat&&<ChatPanel match={openChat} user={user} onClose={()=>setOpenChat(null)} onUnmatch={id=>{setMatches(prev=>prev.filter(m=>m.id!==id));setOpenChat(null);}} />}
         {chosenPopup&&<ChosenPopup notification={chosenPopup} onDismiss={()=>{setChosenPopup(null);setTab('notifications');}} />}
+        {arrivalPopup&&<ArrivalPopup onDismiss={()=>{setArrivalPopup(false);setTab('discover');}} />}
         <div className="header">
           <div className="header-band">
             <div><div className="logo">be my jam</div><span className="logo-sub">♥ {user.city} ♥</span></div>
