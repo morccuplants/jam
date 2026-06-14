@@ -1025,7 +1025,7 @@ function ChatPanel({ match, user, onClose, onUnmatch }) {
 function HoldingScreen({ user }) {
   const [previews, setPreviews] = useState([]);
   const [countdown, setCountdown] = useState('');
-  const LAUNCH = new Date(import.meta.env.VITE_LAUNCH_DATE || '2025-05-27T14:00:00-04:00');
+  const LAUNCH = new Date(import.meta.env.VITE_LAUNCH_DATE || '2026-06-26T14:00:00-04:00');
 
   useEffect(() => {
     apiGetPreviewUsers().then(setPreviews).catch(() => {});
